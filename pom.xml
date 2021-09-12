@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.example</groupId>
+    <groupId>org.zlk</groupId>
     <artifactId>common-test</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
@@ -22,9 +22,13 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <common.zlk.version>1.0-SNAPSHOT</common.zlk.version>
+        <alibaba.druid.version>1.0.29</alibaba.druid.version>
+        <mysql-connector.version>5.1.38</mysql-connector.version>
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -35,15 +39,31 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- common包集合start -->
+        <dependency>
+            <groupId>org.zlk</groupId>
+            <artifactId>common-zlk</artifactId>
+            <version>${common.zlk.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.zlk</groupId>
+            <artifactId>common-db</artifactId>
+            <version>${common.zlk.version}</version>
+        </dependency>
+        <!--common包集合end -->
+
+
     </dependencies>
 
-    <build>
+   <!-- <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
-    </build>
+    </build>-->
 
 </project>
