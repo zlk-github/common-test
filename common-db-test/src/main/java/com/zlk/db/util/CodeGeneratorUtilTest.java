@@ -8,7 +8,6 @@ import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
-import com.zlk.common.db.genertor.MyPackageConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +20,6 @@ import java.util.List;
  * @date 2021/9/13/013 8:27
  */
 public class CodeGeneratorUtilTest {
-
-
 
     public static void main(String[] args) {
         // 代码生成器
@@ -60,8 +57,8 @@ public class CodeGeneratorUtilTest {
         PackageConfig pc = new PackageConfig();
         //  pc.setModuleName(scanner("模块名"));
         pc.setModuleName(null);
-        //manager
-        pc.setParent("com.zlk")
+        //如果需要事务单独，加manager层。本处无实现。
+        pc.setParent("com.zlk.db")
                 .setEntity("model.po")
                 .setMapper("mapper")
                 .setService("service")
@@ -99,7 +96,13 @@ public class CodeGeneratorUtilTest {
 
         // 配置模板
         TemplateConfig templateConfig = new TemplateConfig();
-
+        //自定义模板，不需要加.ftl (.ftl为freemarker模板)
+        templateConfig.setEntity("/templates/entity2.java");
+        templateConfig.setMapper("/templates/mapper2.java");
+        templateConfig.setService("/templates/service2.java");
+        templateConfig.setServiceImpl("/templates/serviceImpl2.java");
+        templateConfig.setController("/templates/controller2.java");
+        templateConfig.setEntity("/templates/entity2.java");
         templateConfig.setXml(null);
         mpg.setTemplate(templateConfig);
 
