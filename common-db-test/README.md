@@ -1,6 +1,6 @@
 ### common-db-test
 
-springboot集成mybatis-plus集成测试，数据库mysql5.7。包含分页、自动注入通用字段、代码生成插件等。
+springboot集成mybatis-plus测试，数据库mysql5.7。包含分页、自动注入通用字段、代码生成插件等。
 
 **源码地址见**：
 
@@ -501,8 +501,7 @@ application.yaml如下
 
 ### 待补充：
 
-字段自动填充、日志输出管理、sql拦截注入、封装新增返回主键id方法、sql多表查询等。
-
+字段自动填充、日志输出管理、sql拦截注入、封装新增返回主键id方法、sql多表查询、切面异步操作日志等。
 
 ### 参考
 
@@ -511,3 +510,5 @@ application.yaml如下
     mybatis-plus源码地址：https://github.com/baomidou/mybatis-plus/
     
     mybatis-plus代码生成器：https://github.com/15706058532/MyBatisPlusGenerator
+
+    AOP切面：https://blog.csdn.net/fz13768884254/article/details/83538709
