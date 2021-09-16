@@ -23,7 +23,7 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <common.zlk.version>1.0-SNAPSHOT</common.zlk.version>
-        <alibaba.druid.version>1.0.29</alibaba.druid.version>
+        <alibaba.druid.version>1.1.21</alibaba.druid.version>
        <!-- <mysql-connector.version>5.1.38</mysql-connector.version>-->
         <mysql-connector.version>8.0.11</mysql-connector.version>
         <freemarker.version>2.3.29</freemarker.version>

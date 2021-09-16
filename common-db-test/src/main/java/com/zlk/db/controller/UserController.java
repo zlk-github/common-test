@@ -1,12 +1,18 @@
 package com.zlk.db.controller;
 
 
+import com.zlk.common.core.page.PageBean;
+import com.zlk.common.core.response.Response;
 import com.zlk.db.model.param.UserParam;
-import io.swagger.annotations.ApiModel;
+import com.zlk.db.model.vo.UserVO;
+import com.zlk.db.service.IUserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.xml.ws.Response;
 
 /**
 * @author  likuan.zhou
@@ -16,12 +22,17 @@ import javax.xml.ws.Response;
 */
 @RestController
 @RequestMapping("/user")
-@ApiModel(value="用户API", description="用户API")
+@Api(value="用户API", description="用户API")
 public class UserController {
 
-    public Response<?> pageList(UserParam userParam){
-        return null;
-    }
+    @Autowired
+    private IUserService userService;
 
+    @GetMapping("/pageList")
+    @ApiOperation(value="用户分页列表查询")
+    public Response<?> pageList(UserParam userParam){
+        PageBean<UserVO> pageList = userService.pageList(userParam);
+        return Response.newSuccessResponse(pageList);
+    }
 
 }

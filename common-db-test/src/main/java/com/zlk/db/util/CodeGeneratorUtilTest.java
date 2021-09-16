@@ -45,9 +45,9 @@ public class CodeGeneratorUtilTest {
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
         dsc.setUrl("jdbc:mysql://localhost:3306/test?useUnicode=true&useSSL=false&characterEncoding=utf-8&serverTimezone=GMT%2B8");
-        // mysql 5.7
+        // com.mysql.jdbc.Driver和mysql-connector-java 5一起用。
         // dsc.setDriverName("com.mysql.jdbc.Driver");
-        // mysql 8.0
+        // com.mysql.cj.jdbc.Driver和mysql-connector-java 6 一起用。比5多了一个时区
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("root");
         dsc.setPassword("123456");

@@ -22,5 +22,5 @@ public class PageParam implements Serializable {
     private Long pageNo;
 
     @ApiModelProperty(value = "每页展示条数")
-    private Integer size;
+    private Integer pageSize;
 }

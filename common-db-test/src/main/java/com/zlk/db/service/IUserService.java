@@ -1,10 +1,10 @@
 package com.zlk.db.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zlk.common.core.page.PageBean;
 import com.zlk.db.model.param.UserParam;
 import com.zlk.db.model.po.User;
-
-import java.util.List;
+import com.zlk.db.model.vo.UserVO;
 
 /**
 * @author  likuan.zhou
@@ -19,6 +19,5 @@ public interface IUserService extends IService<User> {
      * @param userParam 查询参数
      * @return 用户列表
      */
-    List<User> pageList(UserParam userParam);
-
+    PageBean<UserVO> pageList(UserParam userParam);
 }

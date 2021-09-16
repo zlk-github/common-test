@@ -26,7 +26,7 @@ public class UserVO implements Serializable {
     private String name;
 
     @ApiModelProperty(value = "有效状态（0禁用，1启用）")
-    private Boolean status;
+    private Integer status;
 
     @ApiModelProperty(value = "创建者id")
     private String createBy;

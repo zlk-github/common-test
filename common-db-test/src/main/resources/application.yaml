@@ -1,24 +1,19 @@
 server:
-    port: 8088
+    port: 8011
 
-################?????################
+################数据源配置################
 spring:
-  servlet:
-    multipart:
-      enabled: true
-      max-file-size: 20MB #????????
-      max-request-size: 100MB #???????
-  aop:
-    auto: true
-    proxy-target-class: true
   datasource:
-    druid:
-      url: jdbc:mysql://localhost:3306/speedaf_cheetah_oms?useSSL=false&characterEncoding=UTF-8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&useUnicode=true&rewriteBatchedStatements=true
-      username: root
-      password: 123456
-      #driver-class-name: com.mysql.jdbc.Driver
-      # mysql 8.0
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      initialSize: 5
-      minIdle: 5
-      maxActive: 20
+    url: jdbc:mysql://localhost:3306/test?useUnicode=true&useSSL=false&characterEncoding=utf-8&serverTimezone=GMT%2B8
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+
+# 配置slq打印日志
+mybatis-plus:
+  #原生配置
+  configuration:
+    #开启驼峰功能
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  #关键部分。用来显示sql

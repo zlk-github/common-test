@@ -1,8 +1,7 @@
 package com.zlk.db.mapper;
 
-import com.zlk.db.model.po.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.mapstruct.Mapper;
+import com.zlk.db.model.po.User;
 
 /**
 * @author  likuan.zhou
@@ -10,7 +9,7 @@ import org.mapstruct.Mapper;
 * @description: 用户mapper
 * @date 2021-09-14
 */
-@Mapper
+//@Mapper
 public interface UserMapper extends BaseMapper<User> {
 
 }
