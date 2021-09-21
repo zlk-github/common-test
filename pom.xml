@@ -47,11 +47,11 @@
         </dependency>
 
         <!-- common包集合start -->
-       <dependency>
+     <!--  <dependency>
             <groupId>org.zlk</groupId>
             <artifactId>common-zlk</artifactId>
             <version>${common.zlk.version}</version>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>org.zlk</groupId>

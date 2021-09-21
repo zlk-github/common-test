@@ -1,4 +1,4 @@
-package com.zlk.model.po;
+package com.zlk.core.model.po;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

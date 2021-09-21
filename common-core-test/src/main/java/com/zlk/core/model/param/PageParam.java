@@ -1,4 +1,4 @@
-package com.zlk.model.param;
+package com.zlk.core.model.param;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
