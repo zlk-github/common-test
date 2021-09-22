@@ -317,6 +317,49 @@ public class RedisUtilTest {
         assertNotNull(userVOSet);
     }
 
+    @Test
+    public void testZsSize() {
+        //获取key对应Zset长度
+        long aLong = redisUtil.zsSize(ZSET_KEY);
+        assertEquals(3L,aLong);
+    }
+
+    @Test
+    public void testZsRemove() {
+        //获取key对应Zset长度
+        Set<UserVO> set = new HashSet<>();
+        UserVO userVO = new UserVO();
+        userVO.setId(10L);
+        userVO.setName("name:"+10L);
+        userVO.setStatus(1);
+        set.add(userVO);
+        long aLong = redisUtil.zsRemove(ZSET_KEY,set);
+        assertEquals(3L,aLong);
+    }
+
+    @Test
+    public void testZsGetScore() {
+        //获取key对应value的分数
+        UserVO userVO = new UserVO();
+        userVO.setId(10L);
+        userVO.setName("name:"+10L);
+        userVO.setStatus(1);
+        Double score = redisUtil.zsGetScore(ZSET_KEY, userVO);
+        System.out.println(score);
+    }
+
+    @Test
+    public void testZsIncr() {
+        //对key对应value的分数做加减
+        UserVO userVO = new UserVO();
+        userVO.setId(10L);
+        userVO.setName("name:"+10L);
+        userVO.setStatus(1);
+        Double score = redisUtil.zsIncr(ZSET_KEY, userVO,8L);
+        System.out.println(score);
+    }
+
+
     //================造数据===================
     private static List<UserVO> getUserList(){
         ArrayList<UserVO> arrayList = new ArrayList<>();

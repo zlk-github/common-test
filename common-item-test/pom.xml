@@ -49,67 +49,56 @@
 
     <profiles>
         <profile>
+            <!-- 开发环境 -->
             <id>dev</id>
             <properties>
-                <profiles.active>dev</profiles.active>
+                <!-- 这里的属性名是随便取的，可以在后续配置中引用 -->
+                <profiles.dir>dev</profiles.dir>
             </properties>
-            <!-- 是否默认 true表示默认-->
+            <!-- 是否默认 -->
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>true</activeByDefault> <!--设置默认属性-->
             </activation>
         </profile>
 
         <profile>
+            <!-- 测试环境 -->
             <id>test</id>
             <properties>
-                <profiles.active>test</profiles.active>
+                <!-- 这里的属性名是随便取的，可以在后续配置中引用 -->
+                <profiles.dir>test</profiles.dir>
             </properties>
+            <!-- 是否默认 -->
         </profile>
 
         <profile>
             <!-- 生产环境 -->
             <id>prod</id>
             <properties>
-                <profiles.active>prod</profiles.active>
+                <profiles.dir>prod</profiles.dir>
             </properties>
         </profile>
     </profiles>
 
+
     <build>
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
-                <!-- 先排除所有环境相关的配置文件 -->
-                <excludes>
-                    <exclude>application*.yml</exclude>
-                </excludes>
+                <directory>src/main/resources/profiles/${profiles.dir}</directory>
             </resource>
+            <!-- Maven只打包src/main/profile目录下的application-${active.profile}.properties和log4j2-${active.profile}.xml文件-->
             <resource>
-                <directory>src/main/resources/profiles</directory>
+                <directory>src/main/resources/</directory>
+                <!-- **/*.properties 是指包括根目录或子目录所有properties类型的文件 -->
+                <!-- 排除dev、test目录下的文件 -->
+                <excludes>
+                    <exclude>generator/*</exclude>
+                    <exclude>profiles/*/*</exclude>
+                </excludes>
+                <!-- filtering必须为true，才可以使用环境变量、pom文件里定义的属性和指定配置文件里的属性来替换属性文件(*.properties)里的变量 -->
                 <filtering>true</filtering>
-                <includes>
-                    <include>**/application.yaml</include>
-                    <include>**/application-${profiles.active}.yaml</include>
-                </includes>
             </resource>
         </resources>
-
-        <!--<resources>
-            <resource>
-                <directory>src/main/resources/profiles</directory>
-            </resource>
-            <resource>
-                <directory>${profiles.active}</directory>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>**/*.yaml</include>
-                    <include>**/*.xml</include>
-                </includes>
-                <filtering>false</filtering>
-            </resource>
-        </resources>-->
 
         <plugins>
             <plugin>
