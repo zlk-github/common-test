@@ -23,11 +23,13 @@ Spring Boot 如何集成redis做缓存(默认过期时间),分布式锁，布隆
 
 ### 2 Spring Boot 集成redis做缓存
 
-详见：* [Spring Boot 集成redis做缓存](https://github.com/zlk-github/common-test/blob/master/common-redis-test/README-CACHE.md#Spring Boot 集成redis做缓存)
+详见：* [Spring Boot集成redis做缓存](https://github.com/zlk-github/common-test/blob/master/common-redis-test/README-INTRODUCE.md#SpringBoot集成redis做缓存)
 
     Spring Boot 集成redis缓存工具类。与项目中的缓存使用。
 
-### 3 Spring Boot 集成Redission做缓存
+### 3 Spring Boot 集成Redission做分布式锁
+
+详见：* [Spring Boot集成Redission做分布式锁](https://github.com/zlk-github/common-test/blob/master/common-redis-test/README-REDISSION.md#SpringBoot集成Redission做分布式锁)
 
 ### 4 Redis穿透，击穿，雪崩
     
