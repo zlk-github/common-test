@@ -72,4 +72,10 @@ Spring Boot 如何集成redis做缓存(默认过期时间),分布式锁，布隆
     Redisson中文文档（完整） https://github.com/redisson/redisson/wiki/目录
 
     Redis介绍：https://blog.csdn.net/qq_44472134/article/details/104252693
+    
+    Redis数据结构： https://zhuanlan.zhihu.com/p/344918922
+    
+    Redis跳跃表：https://www.jianshu.com/p/c2841d65df4c
+
+    Redis跳跃表（详细）： https://www.jianshu.com/p/c2841d65df4c
 

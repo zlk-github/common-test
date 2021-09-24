@@ -7,33 +7,96 @@ Spring Boot 如何集成redis做缓存。
     1、测试项目github地址：https://github.com/zlk-github/common-test/tree/master/common-redis-test
     2、公共包github地址：git@github.com:zlk-github/common.git    --(https://github.com/zlk-github/common)
 
-### 1 Spring Boot 集成Redis做缓存
 
 Spring Boot 集成Redis缓存工具类。
-#### Redis的常用5种数据类型：
 
-    **string 字符串**（可以为整形、浮点型和字符串，统称为元素） --String字符串或者json字符串，常规下使用最多，存放字符串。
-    string 类型的值最大能存储 512MB。常用命令：get、set、incr、decr、mget等。
+### 1 Redis做缓存介绍
+
+#### 1.1 Redis的常用5种数据类型
+
+    **string 字符串**（可以为整形、浮点型和字符串，统称为元素）
+        -- String字符串或者json字符串，常规下使用最多，存放字符串。
+        -- string 类型的值最大能存储 512MB。
+        -- 常用命令：get、set、incr、decr、mget等。
+        -- 底层结构：简单动态字符串(SDS)
     
-    **list 列表**（实现队列,元素不唯一，先入先出原则）  -- 类比java中LinkedList，比如twitter的关注列表，粉丝列表等都可以用Redis的list结构来实现。
-        “ 双向链表实现”，可以用作栈与队列。内存开销稍大，更新删除等容易，离链表两端远查询会稍慢。
-         常用命令：lpush（添加左边元素）,rpush,lpop（移除左边第一个元素）,rpop,lrange（获取列表片段，LRANGE key start stop）等。
-    
-    **set 集合**（各不相同的元素） -- 类比java中HashSet，redis中set集合是通过hashtable实现的，没有顺序，适合存放需要去重的数据。
-        常用命令：sadd,spop,smembers,sunion 等。
-    
-    **hash** hash散列值（hash的key必须是唯一的） -- 类比java中HashMap (list转换后的Map; 一般为key:map<item,Object>,其中item为Object对象主键) ，
-        适合存放转换后对象列表（通过id查询对应数据，如用户信息）。常用命令：hget,hset,hgetall 等。
-    
-    **sort set** 有序集合  -- 类比java中HashSet，但是有分值比重，适合做去重的排行榜等热数据。“数据结构是跳跃表”
-         常用命令：zadd,zrange,zrem,zcard等
+    **list 列表**（实现队列,元素不唯一，先入先出原则）  
+        -- 类比java中LinkedList，比如twitter的关注列表，粉丝列表等都可以用Redis的list结构来实现。
+           可以用作栈与队列。内存开销稍大，更新删除等容易，离链表两端远查询会稍慢。
+        -- 常用命令：lpush（添加左边元素）,rpush,lpop（移除左边第一个元素）,rpop,lrange（获取列表片段，LRANGE key start stop）等。
+        -- 底层结构：双向链表实现
+
+    **set 集合**（各不相同的元素） 
+        -- 类比java中HashSet，redis中set集合是通过hashtable实现的，没有顺序，适合存放需要去重的数据。
+        -- 常用命令：sadd,spop,smembers,sunion 等。
+        -- 底层结构：intset或者hashtable
+            --如果value可以转成整数值，并且长度不超过512的话就使用intset存储，否则采用hashtable。
+            -- intset编码：使用整数集合作为底层实现，set对象包含的所有元素都被保存在intset整数集合里面
+            -- hashtable编码：使用字典作为底层实现，字典键key包含一个set元素，而字典的值则都为null
+
+    **hash** hash散列值（hash的key必须是唯一的） 
+        -- 类比java中HashMap (list转换后的Map; 一般为key:map<item,Object>,其中item为Object对象主键) ，
+           适合存放转换后对象列表（通过id查询对应数据，如用户信息）。
+        --常用命令：hget,hset,hgetall 等。
+        -- 底层结构：可以是ziplist或者hashtable
+            -- 当哈希对象保存的键值对数量小于 512，并且所有键值对的长度都小于 64 字节时，使用ziplist(压缩列表)存储；否则使用 hashtable 存储。
+            -- 其中，ziplist底层使用压缩列表实现：
+                保存同一键值对的两个节点紧靠相邻，键key在前，值vaule在后
+                先保存的键值对在压缩列表的表头方向，后来在表尾方向
+            -- hashtable底层使用字典实现，Hash对象种的每个键值对都使用一个字典键值对保存：
+                字典的键为字符串对象，保存键key
+                字典的值也为字符串对象，保存键值对的值
+
+    **sort set** 有序集合  
+        -- 类比java中HashSet，但是有分值比重，适合做去重的排行榜等热数据。
+        -- 常用命令：zadd,zrange,zrem,zcard等
+        -- 底层结构：分别是：ziplist、skiplist（跳跃表）
+        -- 分别是：ziplist、skiplist。当zset的长度小于 128，并且所有元素的长度都小于 64 字节时，使用ziplist存储；否则使用 skiplist 存储（跳跃表是二分查找思想）。
     
     另：范围查询，Bitmaps，Hyperloglogs 和地理空间（Geospatial）索引半径查询
 
-#### 与其他缓存方案比较和什么场景适合使用缓存
+#### 1.2 Redis与其他缓存方案比较和什么场景适合使用缓存
 
+##### 1.2.1 Redis与其他缓存方案比较
 
-#### 1.1 pom.xml
+Redis和Memcached的其他区别如下：
+
+    Redis和Memcached都是将数据存放在内存中，都是内存数据库。不过Memcached还可用于缓存其他东西，例如图片、视频等等；
+    Redis不仅仅支持简单的K/V类型的数据，同时还提供List，Set，Hash等数据结构的存储；
+    虚拟内存–Redis当物理内存用完时，可以将一些很久没用到的Value 交换到磁盘；
+    过期策略–Memcached在set时就指定，例如:set key1 0 0 8,即永不过期。Redis可以通过例如expire 设定，例如:expire name 10；
+    分布式–设定Memcached集群，利用magent做一主多从;Redis可以做一主多从。都可以一主一从；
+    存储数据安全–Memcached挂掉后，数据没了；Redis可以定期保存到磁盘（持久化）；
+    灾难恢复–Memcached挂掉后，数据不可恢复; Redis数据丢失后可以通过AOF恢复；
+    Redis支持数据的备份，即Master-Slave模式的数据备份；
+    应用场景不一样：Redis出来作为NoSQL数据库使用外，还能用做消息队列、数据堆栈和数据缓存等；Memcached适合于缓存SQL语句、数据集、用户临时性数据、延迟查询数据和Session等。
+
+##### 1.2.2 什么场景适合使用缓存
+
+数据特性：数据量小，用户访问量大，数据变动小，数据共享等。
+
+    1、热点数据的缓存 --常用
+        访问量大的数据。（如数据字典）
+    2、限时业务的运用 --常用
+        需要过期时间限制的数据。（短信严重码，优惠活动）
+    3、计数器相关问题 --常用
+        原则性递增，递减。（秒杀库存，每天接口调用次数限制，手机短信发送次数限制）
+    4、排行榜相关问题 --常用
+        活动中的排行榜热点数据。
+    5、分布式锁  --常用
+        利用redis的setnx命令进行，setnx："set if not exists"就是如果不存在则成功设置缓存同时返回1，否则返回0。-- 实际中一般使用Redission(setnx的分布式锁封装)
+    6、延时操作
+        实现类似rabbitmq、activemq等消息中间件的延迟队列服务实现。
+    7、set实现并集
+    8、队列
+        由于redis有list push和list pop这样的命令，所以能够很方便的执行队列操作。
+    9、可以实现消息发布/订阅
+
+### 2 Spring Boot 集成Redis做缓存
+
+Spring Boot 集成Redis缓存工具类。
+
+#### 2.1 pom.xml
 
 ```javascript
 <?xml version="1.0" encoding="UTF-8"?>
@@ -132,7 +195,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 </project>
 ```
 
-#### 1.2 配置文件application.yaml
+#### 2.2 配置文件application.yaml
 
 ```javascript
 server:
@@ -160,7 +223,7 @@ spring:
             timeout: 10000
 ```
 
-#### 1.3 Redis缓存配置类
+#### 2.3 Redis缓存配置类
 
 ```javascript
 import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
@@ -281,7 +344,7 @@ public class RedisConfig extends CachingConfigurerSupport {
 
 }
 ```
-#### 1.3 Redis缓存工具类
+#### 2.3 Redis缓存工具类
 
 ```javascript
 
@@ -900,7 +963,7 @@ public class RedisUtil {
 }
 
 ```
-#### 1.4 启动类
+#### 2.4 启动类
 
 ```javascript
 import org.springframework.boot.SpringApplication;
@@ -921,7 +984,7 @@ public class RedisApplication {
 }
 ```
 
-#### 1.5 Redis缓存测试工具类
+#### 2.5 Redis缓存测试工具类
 
 ```javascript
 import com.zlk.common.redis.util.RedisUtil;
@@ -1297,7 +1360,7 @@ public class RedisUtilTest {
         return arrayList;
 }
 ```
-#### 1.5 Redis缓存在项目中使用流程
+#### 2.5 Redis缓存在项目中使用流程
 
 一般会用于用户与数据库中间做一层redis缓存。用于提高并发QPS,降低对关系型数据库的访问压力。
 
@@ -1329,3 +1392,6 @@ redis缓存在项目中见项目：
 
     Redis介绍：https://blog.csdn.net/qq_44472134/article/details/104252693
 
+    Redis数据结构： https://zhuanlan.zhihu.com/p/344918922
+
+    跳跃表：https://www.jianshu.com/p/c2841d65df4c
