@@ -10,7 +10,6 @@ Spring Boot 如何集成redis做缓存。
 ### 1 Spring Boot 集成Redis做缓存
 
 Spring Boot 集成Redis缓存工具类。
-
 #### Redis的常用5种数据类型：
 
     **string 字符串**（可以为整形、浮点型和字符串，统称为元素） --String字符串或者json字符串，常规下使用最多，存放字符串。
@@ -1311,7 +1310,9 @@ public class RedisUtilTest {
 
     2.key命名尽量短，且用“：”分割（key如 项目名称:user:userId），方便分门别类。大部分情况使用String类型即可。
 
-缓存业务流程图
+应用缓存业务流程图
+
+![Image text](./images/redis应用缓存.jpg)
 
 redis缓存在项目中见项目：
 
