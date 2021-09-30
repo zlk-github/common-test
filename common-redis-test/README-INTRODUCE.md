@@ -104,7 +104,7 @@ Redis怎样防止异常数据不丢失
     
     Redis源码地址：https://github.com/redis/redis
     
-    Rpringboot redis 文档：https://docs.spring.io/spring-data/redis/docs/2.0.3.RELEASE/reference/html/
+    Springboot redis 文档：https://docs.spring.io/spring-data/redis/docs/2.0.3.RELEASE/reference/html/
 
     Redis速度为什么这么快 https://blog.csdn.net/xlgen157387/article/details/79470556
 

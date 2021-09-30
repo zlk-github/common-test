@@ -7,9 +7,24 @@ Spring Boot集成Redission做分布式锁。
     1、测试项目github地址：https://github.com/zlk-github/common-test/tree/master/common-redis-test
     2、公共包github地址：git@github.com:zlk-github/common.git     --(https://github.com/zlk-github/common)
 
-### 1 Spring Boot集成Redission做分布式锁
+### 1 Redission分布式锁介绍
 
+    Redisson内部提供了一个监控锁的看门狗，它的作用是在Redisson实例被关闭前，不断的延长锁的有效期。
+    默认情况下，看门狗的检查锁的超时时间是30秒钟，也可以通过修改Config.lockWatchdogTimeout来另行指定。
+    如果程序死亡，到过期时间会自动释放。程序未死亡会自动延时到程序执行完后在程序中自动释放。
 
+### 2 Spring Boot集成Redission做分布式锁
+
+#### 2.2 分布式锁
+
+#### 2.2.1 可重入锁
+
+基于Redis的Redisson分布式可重入锁RLock Java对象实现了java.util.concurrent.locks.Lock接口。
+
+#### 2.2.2 公平锁
+
+基于Redis的Redisson分布式可重入公平锁也是实现了java.util.concurrent.locks.Lock接口的一种RLock对象。
+它保证了当多个Redisson客户端线程同时请求加锁时，优先分配给先发出请求的线程。所有请求线程会在一个队列中排队，当某个线程出现宕机时，Redisson会等待5秒后继续下一个线程，也就是说如果前面有5个线程都处于等待状态，那么后面的线程会等待至少25秒。
 
 ### 参考
 
@@ -17,7 +32,7 @@ Spring Boot集成Redission做分布式锁。
     
     Redis源码地址：https://github.com/redis/redis
     
-    Rpringboot redis 文档：https://docs.spring.io/spring-data/redis/docs/2.0.3.RELEASE/reference/html/
+    Springboot redis 文档：https://docs.spring.io/spring-data/redis/docs/2.0.3.RELEASE/reference/html/
 
     Redisson官网 https://redisson.org/
 
