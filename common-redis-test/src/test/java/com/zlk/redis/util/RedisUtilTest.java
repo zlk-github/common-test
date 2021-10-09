@@ -1,4 +1,4 @@
-package com.zlk.redis;
+package com.zlk.redis.util;
 
 
 import com.zlk.common.redis.util.RedisUtil;

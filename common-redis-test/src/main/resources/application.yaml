@@ -10,7 +10,7 @@ spring:
         port: 6379
         password:
         jedis:
-            #pool:
+            pool:
                 #最大连接数
                 max-active: 8
                 #最大阻塞等待时间(负数表示没限制)
