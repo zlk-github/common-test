@@ -79,3 +79,7 @@ Spring Boot 如何集成redis做缓存(默认过期时间),分布式锁，布隆
 
     Redis跳跃表（详细）： https://www.jianshu.com/p/c2841d65df4c
 
+    Redisson锁 https://github.com/redisson/redisson/wiki/8.-%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%92%8C%E5%90%8C%E6%AD%A5%E5%99%A8
+
+    Redisson信号量与闭锁 https://blog.csdn.net/qq_43080270/article/details/113184266?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_utm_term~default-0.no_search_link&spm=1001.2101.3001.4242
+

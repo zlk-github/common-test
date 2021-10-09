@@ -5,7 +5,7 @@ Spring Boot 如何集成redis做缓存。
 **源码地址见**：
 
     1、测试项目github地址：https://github.com/zlk-github/common-test/tree/master/common-redis-test
-    2、公共包github地址：git@github.com:zlk-github/common.git    --(https://github.com/zlk-github/common)
+    2、公共包github地址：git@github.com:zlk-github/common.git    --(https://github.com/zlk-github/common/tree/master/common-redis)
 
 
 Spring Boot 集成Redis缓存工具类。
@@ -98,7 +98,7 @@ Spring Boot 集成Redis缓存工具类。
 
 #### 2.1 pom.xml
 
-```javascript
+```java
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -197,7 +197,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 
 #### 2.2 配置文件application.yaml
 
-```javascript
+```java
 server:
     port: 8015
 
@@ -225,7 +225,7 @@ spring:
 
 #### 2.3 Redis缓存配置类
 
-```javascript
+```java
 import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -346,7 +346,7 @@ public class RedisConfig extends CachingConfigurerSupport {
 ```
 #### 2.3 Redis缓存工具类
 
-```javascript
+```java
 
 impor lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -965,7 +965,7 @@ public class RedisUtil {
 ```
 #### 2.4 启动类
 
-```javascript
+```java
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -986,7 +986,7 @@ public class RedisApplication {
 
 #### 2.5 Redis缓存测试工具类
 
-```javascript
+```java
 import com.zlk.common.redis.util.RedisUtil;
 import com.zlk.core.model.vo.UserVO;
 import org.junit.Test;

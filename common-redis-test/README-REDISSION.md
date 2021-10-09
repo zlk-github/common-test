@@ -5,7 +5,8 @@ Spring Boot集成Redission做分布式锁。
 **源码地址见**：
 
     1、测试项目github地址：https://github.com/zlk-github/common-test/tree/master/common-redis-test
-    2、公共包github地址：git@github.com:zlk-github/common.git     --(https://github.com/zlk-github/common)
+    2、公共包github地址：git@github.com:zlk-github/common.git    --(https://github.com/zlk-github/common/tree/master/common-redis)
+
 
 ### 1 Redission分布式锁介绍
 
@@ -39,8 +40,6 @@ Spring Boot集成Redission做分布式锁。
     基于Redis的Redisson分布式联锁RedissonMultiLock对象可以将多个RLock对象关联为一个联锁，每个RLock对象实例可以来自于不同的Redisson实例。
 
 
-
-
 ### 参考
 
     Redis官网 https://www.redis.net.cn/tutorial/3501.html || https://redis.io/download
@@ -54,3 +53,8 @@ Spring Boot集成Redission做分布式锁。
     Redisson官方文档 https://github.com/redisson/redisson/wiki
 
     Redisson中文文档（完整） https://github.com/redisson/redisson/wiki/目录
+
+    Redisson锁 https://github.com/redisson/redisson/wiki/8.-%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%92%8C%E5%90%8C%E6%AD%A5%E5%99%A8
+
+    Redisson信号量与闭锁 https://blog.csdn.net/qq_43080270/article/details/113184266?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_utm_term~default-0.no_search_link&spm=1001.2101.3001.4242
+

@@ -5,7 +5,8 @@ Redis介绍与常见问题汇总。
 **源码地址见**：
 
     1、测试项目github地址：https://github.com/zlk-github/common-test/tree/master/common-redis-test
-    2、公共包github地址：git@github.com:zlk-github/common.git
+    2、公共包github地址：git@github.com:zlk-github/common.git    --(https://github.com/zlk-github/common/tree/master/common-redis)
+
 
 ### 1 Redis 介绍
 
