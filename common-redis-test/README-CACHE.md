@@ -84,7 +84,7 @@ Redis和Memcached的其他区别如下：
     4、排行榜相关问题 --常用
         活动中的排行榜热点数据。
     5、分布式锁  --常用
-        利用redis的setnx命令进行，setnx："set if not exists"就是如果不存在则成功设置缓存同时返回1，否则返回0。-- 实际中一般使用Redission(setnx的分布式锁封装)
+        利用redis的setnx命令进行，setnx："set if not exists"就是如果不存在则成功设置缓存同时返回1，否则返回0。-- 实际中一般使用Redisson(setnx的分布式锁封装)
     6、延时操作
         实现类似rabbitmq、activemq等消息中间件的延迟队列服务实现。
     7、set实现并集

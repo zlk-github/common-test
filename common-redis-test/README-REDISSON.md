@@ -1,6 +1,6 @@
-##  Spring Boot集成Redission做分布式锁(common-redis-test)
+##  Spring Boot集成Redisson做分布式锁(common-redis-test)
 
-Spring Boot集成Redission做分布式锁。
+Spring Boot集成Redisson做分布式锁。
 
 **源码地址见**：
 
@@ -8,13 +8,13 @@ Spring Boot集成Redission做分布式锁。
     2、公共包github地址：git@github.com:zlk-github/common.git    --(https://github.com/zlk-github/common/tree/master/common-redis)
 
 
-### 1 Redission分布式锁介绍
+### 1 Redisson分布式锁介绍
 
     Redisson内部提供了一个监控锁的看门狗，它的作用是在Redisson实例被关闭前，不断的延长锁的有效期。
     默认情况下，看门狗的检查锁的超时时间是30秒钟，也可以通过修改Config.lockWatchdogTimeout来另行指定。
     如果程序死亡，到过期时间会自动释放。程序未死亡会自动延时到程序执行完后在程序中自动释放。
 
-### 2 Spring Boot集成Redission做分布式锁
+### 2 Spring Boot集成Redisson做分布式锁
 
 #### 2.2 分布式锁
 
