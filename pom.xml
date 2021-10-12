@@ -71,21 +71,26 @@
             <version>${common.zlk.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.zlk</groupId>
+            <artifactId>common-web</artifactId>
+            <version>${common.zlk.version}</version>
+        </dependency>
         <!--common包集合end -->
 
-        <!-- https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui -->
+     <!--   &lt;!&ndash; https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui &ndash;&gt;
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
             <version>${springfox-swagger2.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/io.springfox/springfox-swagger2 -->
+        &lt;!&ndash; https://mvnrepository.com/artifact/io.springfox/springfox-swagger2 &ndash;&gt;
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
             <version>${springfox-swagger2.version}</version>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>org.apache.commons</groupId>
