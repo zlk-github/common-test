@@ -1,5 +1,5 @@
 server:
-    port: 8015
+    port: 8025
 
 ################redis配置################
 spring:
@@ -21,3 +21,7 @@ spring:
                 min-idle: 0
             #连接超时时间
             timeout: 10000
+
+#是否激活 swagger true or false
+swagger:
+    enable: true
