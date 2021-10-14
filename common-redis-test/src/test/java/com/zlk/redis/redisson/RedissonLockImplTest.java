@@ -2,10 +2,8 @@ package com.zlk.redis.redisson;
 
 import com.zlk.common.redis.redisson.IRedissonLock;
 import com.zlk.redis.constant.RedissonConstant;
-import io.swagger.annotations.ApiOperation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.redisson.RedissonLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -87,8 +85,18 @@ public class RedissonLockImplTest {
         }
     }
 
-    public static void ss() {
+    @Test
+    //重入锁--公平锁--普通类型
+    public void addFairLock(){
+        //它保证了当多个Redisson客户端线程同时请求加锁时，优先分配给先发出请求的线程。所有请求线程会在一个队列中排队，
+        // 当某个线程出现宕机时，Redisson会等待5秒后继续下一个线程，也就是说如果前面有5个线程都处于等待状态，那么后面的线程会等待至少25秒。
 
+        //加可重入锁-默认30S,到期看门狗会重置时间
+        //Redisson实例被关闭前，不断的延长锁的有效期。默认情况下，看门狗的检查锁的超时时间是30秒钟，也可以通过修改Config.lockWatchdogTimeout来另行指定。
+        //公平锁讲究先进先出原则。
+        Boolean bl = redissonLock.addFairLock(RedissonConstant.LOCK_KEY);
+        //注：释放锁需要手动调用 lock.unlock();或者宕机后到期自动失效。
+        //redissonLock.removeFairLock(RedissonConstant.LOCK_KEY);
     }
 
 
