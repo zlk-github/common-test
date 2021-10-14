@@ -7,12 +7,25 @@ Spring Boot集成Redisson做分布式锁。
     1、测试项目github地址：https://github.com/zlk-github/common-test/tree/master/common-redis-test
     2、公共包github地址：git@github.com:zlk-github/common.git    --(https://github.com/zlk-github/common/tree/master/common-redis)
 
+分布式锁实现与比较
+
+|  技术选型  | 复杂度 <br>（实现成本）  | 性能 | 可靠性 | 优点  | 缺点 | 实现技术 |
+|  ----  | ----  |----  | ----  |----  |----  | ----  |
+| Redisson分布式锁  | 中 |高 | 中  |  | |基于Redis的setnx与看门狗,即Redisson|
+| MySQL分布式锁  | 低 |低 | 低 |  | |基于关系型数据库排他锁 |
+| Zookeeper分布式锁  | 高 |中 | 高 |  | |基于Zookeeper |
+| Memcached分布式锁  | 中 |高 | 中   |  | |基于Memcached缓存 |
+
+    
+    一般情况下Redisson分布式锁是不二之选（大部分项目都会使用到Redis，跨语言API。且实现难度一般，性能高，可靠性也不错）
+    
+    如果项目中有使用到Zookeeper且团队对Zookeeper熟悉，可以考虑选择Zookeeper分布式锁。
 
 ### 1 Redisson分布式锁介绍
 
     Redisson内部提供了一个监控锁的看门狗，它的作用是在Redisson实例被关闭前，不断的延长锁的有效期。
     默认情况下，看门狗的检查锁的超时时间是30秒钟，也可以通过修改Config.lockWatchdogTimeout来另行指定。
-    如果程序死亡，到过期时间会自动释放。程序未死亡会自动延时到程序执行完后在程序中自动释放。
+    如果程序死亡，到过期时间会自动释放。程序未死亡会自动延时到程序执行完后在程序中自动释放（unlock）。
 
 ### 2 Spring Boot集成Redisson做分布式锁
 
@@ -58,3 +71,4 @@ Spring Boot集成Redisson做分布式锁。
 
     Redisson信号量与闭锁 https://blog.csdn.net/qq_43080270/article/details/113184266?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_utm_term~default-0.no_search_link&spm=1001.2101.3001.4242
 
+    Redisson 使用手册 https://www.bookstack.cn/read/redisson-wiki-zh/Redisson项目介绍.md
