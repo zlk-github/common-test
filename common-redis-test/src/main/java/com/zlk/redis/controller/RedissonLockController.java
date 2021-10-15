@@ -20,7 +20,7 @@ import java.util.concurrent.Future;
  * @author likuan.zhou
  * @title: RedissonLockController
  * @projectName common-test
- * @description: Redisson锁
+ * @description: Redisson分布式锁测试接口
  * @date 2021/10/9/009 13:40
  */
 @Api(tags = "Redisson锁")

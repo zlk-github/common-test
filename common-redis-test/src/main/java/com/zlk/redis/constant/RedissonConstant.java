@@ -4,7 +4,7 @@ package com.zlk.redis.constant;
  * @author likuan.zhou
  * @title: RedissonConstant
  * @projectName common-test
- * @description: TODO
+ * @description: Redisson常量
  * @date 2021/10/9/009 13:38
  */
 public interface RedissonConstant {
