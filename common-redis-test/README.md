@@ -37,19 +37,92 @@ Spring Boot 如何集成redis做缓存(默认过期时间),分布式锁，布隆
     Redis缓存击穿：数据库中存在对应值，redi缓存过期，大量请求访问打到数据库；（分布式锁Redisson）
     Redis缓存雪崩：缓存大面积失效，或者重启消耗大量资源。（缓存时间设置随机，启动加到队列,冷热数据分离，预加载等，热数据均匀分布到不同缓存数据库）
 
-### 5 消息传递/发布订阅
+### 5 消息传递/发布订阅（非重点）
 
-### 6 Redis 事务
+参考见：
+
+    https://www.cnblogs.com/yitudake/p/6747995.html
+    https://blog.csdn.net/qq_29443327/article/details/107140420?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_title~default-1.no_search_link&spm=1001.2101.3001.4242
+
+简介：
+
+    Redis提供了发布订阅功能，可以用于消息的传输，Redis的发布订阅机制包括三个部分，发布者，订阅者和Channel。
+
+    发布者和订阅者都是Redis客户端，Channel则为Redis服务器端，发布者将消息发送到某个的频道，订阅了这个频道的订阅者就能接收到这条消息。Redis的这种发布订阅机制与基于主题的发布订阅类似，Channel相当于主题。
+
+    基于list（链表队列）实现。
+    （1）发送消息
+        Redis采用PUBLISH命令发送消息，其返回值为接收到该消息的订阅者的数量。
+    （2）订阅某个频道
+         Redis采用SUBSCRIBE命令订阅某个频道，其返回值包括客户端订阅的频道，目前已订阅的频道数量，以及接收到的消息，其中subscribe表示已经成功订阅了某个频道。
+    （3）模式匹配 
+        模式匹配功能允许客户端订阅符合某个模式的频道，Redis采用PSUBSCRIBE订阅符合某个模式所有频道，用“”表示模式，“”可以被任意值代替。
+    （4）取消订阅 
+        Redis采用UNSUBSCRIBE和PUNSUBSCRIBE命令取消订阅，其返回值与订阅类似。
+
+    注：不能提供消消息队列的消息持久化。
+
+场景：
+
+    可以用来维护关注列表做推送与关注数查询（如当前你被多少粉丝关注，推送文章给粉丝）
+
+
+### 6 Redis 事务（非重点）
+
+参考见：https://zhuanlan.zhihu.com/p/135241403
+
+关系型数据中的事务都是原子性的（同一个事务内提交，要么全部成功，要么全部失败叫做原则性），而redis 的事务是非原子性的。
+严格的说Redis的命令是原子性的，而事务是非原子性的。
+
+Redis事务相关命令：
+
+    MULTI ：开启事务，redis会将后续的命令逐个放入队列中，然后使用EXEC命令来原子化执行这个命令系列。
+    EXEC：执行事务中的所有操作命令。
+    DISCARD：取消事务，放弃执行事务块中的所有命令。
+    WATCH：监视一个或多个key,如果事务在执行前，这个key(或多个key)被其他命令修改，则事务被中断，不会执行事务中的任何命令。
+    UNWATCH：取消WATCH对所有key的监视。
+
+注：
+    
+    多数事务失败是由语法错误或者数据结构类型错误导致的，语法错误说明在命令入队前就进行检测的（会全部失败），
+    而类型错误是在执行时检测的（会部分成功），Redis为提升性能而采用这种简单的事务，这是不同于关系型数据库的，特别要注意区分。
 
 ### 7 Redis持久化
 
+由于Redis数据存放在内存中，定期写入磁盘（半持久化）。如果没有配置持久化，redis重启后数据就全丢失了。Redis提供了两种持久化机制，将数据保存到磁盘上，重启后从磁盘恢复数据。
+分布为RDB(Redis DataBase)和AOF(Append Only File)。
+
+**RDB**：快照方式，全量备份。将Reids在内存中的数据库记录定时dump到磁盘上的RDB持久化。
+
+**AOF**：日志记录方式。操作日志记录以追加方式写入文件。
+
+|  技术选型  | RDB | AOF |
+|  ----  | ----  |----  | 
+| 启动优先级| 低  | 高 | 
+|  体积 | 小| 大| 
+|  恢复速度 | 快| 慢| 
+|  数据安全性 | 丢数据 | 根据策略决定 | 
+|  轻重 | 重 | 轻| 
+
 ### 8 Redis集群方案
 
-#### 8.1 主从-哨兵模式
+单机模式会不能实现高可用，从而产生以下几种解决方案。
 
-一主两从三哨兵。能满足高可用，但是选举时会间断。扩展难，有性能瓶颈。
+    1.哨兵模式
+    
+    2.主从模式
+    
+    3.集群模式
 
-#### 8.2 集群模式
+#### 8.1 哨兵模式
+
+一主二从三哨兵。能满足高可用，但是选举时会间断。扩展难，有性能瓶颈。
+
+#### 8.2 主从模式
+
+
+
+#### 8.3 集群模式
 
 最少3个master节点，且每个主节点下挂一个slave节点。
 
@@ -77,7 +150,7 @@ key的有效时间
     
     Redis源码地址：https://github.com/redis/redis
     
-    Rpringboot redis 文档：https://docs.spring.io/spring-data/redis/docs/2.0.3.RELEASE/reference/html/
+    Springboot redis 文档：https://docs.spring.io/spring-data/redis/docs/2.0.3.RELEASE/reference/html/
 
     Redis速度为什么这么快 https://blog.csdn.net/xlgen157387/article/details/79470556
 
