@@ -58,6 +58,14 @@ Redis是C语言编写，需要安装C环境。
     当前切换目录到src： cd ./src/
     移动:  mv mkreleasehdr.sh redis-benchmark redis-check-aof redis-cli redis-server /usr/local/redis/redis-5.0.14/bin/
 
+Redis相关可执行文件的主要作用
+
+    （1）redis-server  -------Redis服务器
+    （2）redis-cli         -------Redis命令行客户端
+    （3）redis-benchmark ---------Redis性能测试工具
+    （4）redis-check-aof ----------AOF文件修复工具
+    （5）redis-check-dump --------RDB文件检查工具
+
 ### 6 编辑 redis.conf配置文件，设置后台启动redis服务，开启redis远程访问服务，允许远程访问，更改密码。
 
     进入etc目录：/usr/local/redis/redis-5.0.14/etc
@@ -90,7 +98,7 @@ Redis是C语言编写，需要安装C环境。
 切换到 /usr/local/redis/redis-5.0.14/bin/ 目录下执行 redis-server 命令，使用 /usr/local/redis/redis-5.0.14/etc/redis.conf配置文件来启动redis服务
  
     进入目录：  cd /usr/local/redis/redis-5.0.14/bin
-    启动命令： ./redis-server /usr/local/redis/redis-5.0.14/etc/redis.conf
+    启动服务命令： ./redis-server /usr/local/redis/redis-5.0.14/etc/redis.conf
 
 #### 8.2 查看Redis启动情况
 
@@ -102,9 +110,25 @@ Redis是C语言编写，需要安装C环境。
     root     10002  0.0  0.0 112824  2232 pts/0    S+   09:02   0:00 grep --color=auto redis
     [root@iZwz9feedi7zuvp1dofbzhZ bin]#
 
-### 9 如果是阿里云服务器需要开放6379端口，检查是否设置IP白名单。
+#### 8.3 Redis服务关闭与重启
 
-### 10 检查外部是否可连接上（开发测试使用）
+    进入目录：  cd /usr/local/redis/redis-5.0.14/bin
+    停止服务：  ./redis-cli -p 6379 shutdown   (注：不要使用kill -9 PID,会导致备份丢数据)
+    启动服务命令： ./redis-server /usr/local/redis/redis-5.0.14/etc/redis.conf
+
+#### 8.4 开启客户端
+
+    进入目录：  cd /usr/local/redis/redis-5.0.14/bin
+    启动客户端命令： ./redis-cli 
+
+客户端进入后如下：（当前窗口可以操作redis命令）
+
+    [root@iZwz9feedi7zuvp1dofbzhZ bin]# ./redis-cli
+    127.0.0.1:6379>
+
+### 9 如果是阿里云服务器需要开放6379端口，检查是否设置IP白名单。（--待补充）
+
+### 10 检查外部是否可连接上（开发测试使用）（--待补充）
 
 注：连接需要使用外网IP与开放的端口。
 
