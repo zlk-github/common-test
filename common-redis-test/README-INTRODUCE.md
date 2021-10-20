@@ -126,3 +126,5 @@ Redis怎样防止异常数据不丢失
     Redis数据结构： https://zhuanlan.zhihu.com/p/344918922
     
     Redis跳跃表：https://www.jianshu.com/p/c2841d65df4c
+
+    Redis版本介绍：https://blog.csdn.net/damanchen/article/details/110455024?spm=1001.2101.3001.6650.2&utm_medium=distribute.pc_relevant.none-task-blog-2~default~CTRLIST~default-2.tagcolumn&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2~default~CTRLIST~default-2.tagcolumn
