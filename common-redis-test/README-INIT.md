@@ -1,14 +1,115 @@
 ###  Linux 安装 Redis
 
-Linux版本：
-
-Redis版本: 5.0
+    Linux：conts7
+    
+    Redis版本: 5.0.14
+        官网下载网页链接：https://redis.io/download
+    
+    第三方Redis连接工具推荐：RedisDesktopManager
+        官网下载：https://redisdesktop.com/download
 
 ### 1 Redis 下载
 
 官网下载网页链接：https://redis.io/download
 
 ![Image text](./images/redis下载地址.png)
+
+### 2 上传到linux路径 /usr/local/redis
+
+    cd /usr/local/redis
+    rz命令上传
+
+### 3 解压redis-5.0.14.tar.gz
+
+    tar -zxvf redis-5.0.14.tar.gz
+    
+    解压目录结果如下（redis-5.0.14）
+    [root@iZwz9feedi7zuvp1dofbzhZ redis]# ls
+    redis-5.0.14  redis-5.0.14.tar.gz  redis-6.2.6.tar.gz
+
+### 4 安装gcc环境
+
+Redis是C语言编写，需要安装C环境。
+
+    yum install gcc-c++
+
+### 5 进入/usr/local/redis/redis-5.0.14下进行编译与安装
+
+    进入目录： cd /usr/local/redis/redis-5.0.14
+    编译： make
+    当前目录切换到src： cd ./src
+    安装Redis： make install
+
+### 5 为了方便管理，将Redis文件中的conf配置文件和常用命令移动到统一文件中
+
+     进入目录： cd /usr/local/redis/redis-5.0.14
+
+#### 5.1 创建bin目录与etc目录
+
+    创建bin目录：mkdir bin  
+    创建etc目录：mkdir etc
+
+#### 5.2 将redis-5.0.14目录下的 redis.conf 移动到 redis-5.0.14目录下的etc文件夹下。
+
+    移动: mv redis.conf ./etc/
+
+#### 5.3 将mkreleasehdr.sh、redis-benchmark、redis-check-aof、redis-cli、redis-server 移动到   /usr/local/redis/redis-5.0.14//bin/ 目录下.
+
+    当前切换目录到src： cd ./src/
+    移动:  mv mkreleasehdr.sh redis-benchmark redis-check-aof redis-cli redis-server /usr/local/redis/redis-5.0.14/bin/
+
+### 6 编辑 redis.conf配置文件，设置后台启动redis服务，开启redis远程访问服务，允许远程访问，更改密码。
+
+    进入etc目录：/usr/local/redis/redis-5.0.14/etc
+    编辑Redis配置文件：
+    1.打开文件：vim redis.conf
+    2.进入编辑：i
+
+    3.daemonize yes （daemonize yes表明需要在后台运行）
+    4.# bind 127.0.0.1 （bind 127.0.0.1 这一行给注释掉，这里的bind指的是只有指定的网段才能远程访问这个redis，注释掉后，就没有这个限制了。）
+    5.protected-mode no（protected-mode no允许远程访问）
+    6.# requirepass foobared （去掉注释，更改密码，看需要设置，默认不设置密码为空）
+
+    7.退出编辑:
+        esc退出编辑状态。
+        ：wq 保存退出
+        ：q！强制退出，所有改动不生效（该处未使用到）
+
+### 7 设置Redis开机启动
+
+将Redis启动与配置路径添加到系统 /etc/rc.d/rc.local后保存。
+
+    进入编辑： vim /etc/rc.d/rc.local
+        添加如下内容（redis的bin目录与配置文件目录）：
+        /usr/local/redis/redis-5.0.14/bin/redis-server  /usr/local/redis/redis-5.0.14/etc/redis.conf
+
+### 8 启动Redis
+
+#### 8.1 选择配置文件启动Redis
+
+切换到 /usr/local/redis/redis-5.0.14/bin/ 目录下执行 redis-server 命令，使用 /usr/local/redis/redis-5.0.14/etc/redis.conf配置文件来启动redis服务
+ 
+    进入目录：  cd /usr/local/redis/redis-5.0.14/bin
+    启动命令： ./redis-server /usr/local/redis/redis-5.0.14/etc/redis.conf
+
+#### 8.2 查看Redis启动情况
+
+命令：ps aux|grep redis
+
+    [root@iZwz9feedi7zuvp1dofbzhZ bin]# ps aux|grep redis
+    polkitd   4490  0.1  0.1  55528 10164 pts/1    Ssl+ May28 213:12 redis-server *:6379
+    root      9997  0.0  0.1 154012  9540 ?        Ssl  09:02   0:00 ./redis-server *:6379
+    root     10002  0.0  0.0 112824  2232 pts/0    S+   09:02   0:00 grep --color=auto redis
+    [root@iZwz9feedi7zuvp1dofbzhZ bin]#
+
+### 9 如果是阿里云服务器需要开放6379端口，检查是否设置IP白名单。
+
+### 10 检查外部是否可连接上（开发测试使用）
+
+注：连接需要使用外网IP与开放的端口。
+
+    windows测试远程主机和Redis端口： telnet ip Redis端口
+    或者使用RedisDesktopManager连接测试
 
 
 ### 参考
