@@ -74,7 +74,8 @@ Redis相关可执行文件的主要作用
     2.进入编辑：i
 
     3.daemonize yes （daemonize yes表明需要在后台运行）
-    4.# bind 127.0.0.1 （bind 127.0.0.1 这一行给注释掉，这里的bind指的是只有指定的网段才能远程访问这个redis，注释掉后，就没有这个限制了。）
+    --4.# bind 127.0.0.1 （bind 127.0.0.1 这一行给注释掉，这里的bind指的是只有指定的网段才能远程访问这个redis，注释掉后，就没有这个限制了。）
+    4. bind 0.0.0.0 （127.0.0.1只有本地可以访问，0.0.0.0则都可以访问）
     5.protected-mode no（protected-mode no允许远程访问）
     6.# requirepass foobared （去掉注释，更改密码，看需要设置，默认不设置密码为空）
 
@@ -93,6 +94,37 @@ Redis相关可执行文件的主要作用
 
 ### 8 启动Redis
 
+#### 前置条件关闭防火墙或者防火墙已放行该端口。
+
+    防火墙状态：systemctl status firewalld
+    开启防火墙 ：systemctl start firewalld
+    开机自启：systemctl enable firewalld
+    防火墙已放行端口6379 ：
+        （1）如我们需要开启XShell连接时需要使用的6379端口
+        firewall-cmd --zone=public --add-port=6379/tcp --permanent
+        其中--permanent的作用是使设置永久生效，不加的话机器重启之后失效
+        （2）重新载入一下防火墙设置，使设置生效
+        firewall-cmd --reload
+        （3）可通过如下命令查看是否生效
+        firewall-cmd --zone=public --query-port=6379/tcp
+
+
+该处不需要执行：
+
+    查看当前系统打开的所有端口:firewall-cmd --zone=public --list-ports
+    关闭防火墙（该处不需要）:
+    限制端口:
+        （1）比如我们现在需要关掉打开的22端口
+        firewall-cmd --zone=public --remove-port=22/tcp --permanent
+        （2）重新载入一下防火墙设置，使设置生效
+        firewall-cmd --reload
+
+    批量开放或限制端口
+        （1）批量开放端口，如从100到500这之间的端口我们全部要打开
+        firewall-cmd --zone=public --add-port=100-500/tcp --permanent
+        （2）重新载入一下防火墙设置，使设置生效
+        firewall-cmd --reload
+
 #### 8.1 选择配置文件启动Redis
 
 切换到 /usr/local/redis/redis-5.0.14/bin/ 目录下执行 redis-server 命令，使用 /usr/local/redis/redis-5.0.14/etc/redis.conf配置文件来启动redis服务
@@ -109,6 +141,9 @@ Redis相关可执行文件的主要作用
     root      9997  0.0  0.1 154012  9540 ?        Ssl  09:02   0:00 ./redis-server *:6379
     root     10002  0.0  0.0 112824  2232 pts/0    S+   09:02   0:00 grep --color=auto redis
     [root@iZwz9feedi7zuvp1dofbzhZ bin]#
+
+    netstat -antp | grep 6379
+
 
 #### 8.3 Redis服务关闭与重启
 
@@ -128,6 +163,10 @@ Redis相关可执行文件的主要作用
 
 ### 9 如果是阿里云服务器需要开放6379端口，检查是否设置IP白名单。（--待补充）
 
+安全组配置见：https://help.aliyun.com/document_detail/25471.html?spm=a2c6h.13066369.0.0.45b56c86u5ESFx&userCode=28kqeewo
+
+
+
 ### 10 检查外部是否可连接上（开发测试使用）（--待补充）
 
 注：连接需要使用外网IP与开放的端口。
@@ -135,6 +174,7 @@ Redis相关可执行文件的主要作用
     windows测试远程主机和Redis端口： telnet ip Redis端口
     或者使用RedisDesktopManager连接测试
 
+telnet 47.119.180.152 443
 
 ### 参考
 
@@ -144,3 +184,8 @@ Redis相关可执行文件的主要作用
     
     Redis源码地址：https://github.com/redis/redis
 
+    配置阿里redis云端口：https://www.cnblogs.com/klayHuang/p/14904862.html
+
+    安全组配置端口（详细）：https://help.aliyun.com/document_detail/25471.html?spm=a2c6h.13066369.0.0.45b56c86u5ESFx&userCode=28kqeewo
+
+    LINUX现在ip与端口（详细）：https://blog.csdn.net/ywd1992/article/details/80401630
