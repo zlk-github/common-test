@@ -94,7 +94,7 @@ Redis事务相关命令：
 
 ### 7 Redis持久化
 
-由于Redis数据存放在内存中，定期写入磁盘（半持久化）。如果没有配置持久化，redis重启后数据就全丢失了。Redis提供了两种持久化机制，将数据保存到磁盘上，重启后从磁盘恢复数据。
+由于Redis数据存放在内存中，定期写入磁盘（半持久化）。如果没有配置持久化，redis重启后数据会产生丢失。Redis提供了两种持久化机制，将数据保存到磁盘上，重启后从磁盘恢复数据。
 分布为RDB(Redis DataBase)和AOF(Append Only File)。
 
 **RDB**：快照方式，全量备份。将Reids在内存中的数据库记录定时dump到磁盘上的RDB持久化。
@@ -108,6 +108,8 @@ Redis事务相关命令：
 |  恢复速度 | 快| 慢| 
 |  数据安全性 | 丢数据 | 根据策略决定 | 
 |  轻重 | 重 | 轻| 
+
+详见： [Redis数据持久化](https://github.com/zlk-github/common-test/blob/master/common-redis-test/README-PERSISTENCE.md#Redis数据持久化)
 
 ### 8 Redis集群方案
 
