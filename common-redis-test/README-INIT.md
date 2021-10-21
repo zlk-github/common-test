@@ -112,7 +112,9 @@ Redis相关可执行文件的主要作用
 该处不需要执行：
 
     查看当前系统打开的所有端口:firewall-cmd --zone=public --list-ports
-    关闭防火墙（该处不需要）:
+    关闭防火墙（暂时）:systemctl stop firewalld
+    关闭防火墙（永久）:systemctl disable firewalld
+    防火墙详情：firewall-cmd --list-all
     限制端口:
         （1）比如我们现在需要关掉打开的22端口
         firewall-cmd --zone=public --remove-port=22/tcp --permanent
@@ -174,7 +176,7 @@ Redis相关可执行文件的主要作用
     windows测试远程主机和Redis端口： telnet ip Redis端口
     或者使用RedisDesktopManager连接测试
 
-telnet 47.119.180.152 443
+
 
 ### 参考
 
