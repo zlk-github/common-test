@@ -21,21 +21,26 @@ Spring Boot 如何集成redis做缓存(默认过期时间),分布式锁，布隆
         1.5.3 简述Redis的数据淘汰机制
         1.5.4 Redis怎样防止异常数据不丢失
 
+安装见：[Linux安装Redis教程](https://github.com/zlk-github/common-test/blob/master/common-redis-test/README-INIT.md#Linux安装Redis教程)
+
+
 ### 2 Spring Boot 集成redis做缓存
 
-详见：* [Spring Boot集成redis做缓存](https://github.com/zlk-github/common-test/blob/master/common-redis-test/README-CACHE.md#SpringBoot集成redis做缓存)
+详见： [Spring Boot集成redis做缓存](https://github.com/zlk-github/common-test/blob/master/common-redis-test/README-CACHE.md#SpringBoot集成redis做缓存)
 
     Spring Boot 集成redis缓存工具类。与项目中的缓存使用。
 
 ### 3 Spring Boot 集成Redisson做分布式锁
 
-详见：* [Spring Boot集成Redisson做分布式锁](https://github.com/zlk-github/common-test/blob/master/common-redis-test/README-Redisson.md#SpringBoot集成Redisson做分布式锁)
+详见：[Spring Boot集成Redisson做分布式锁](https://github.com/zlk-github/common-test/blob/master/common-redis-test/README-Redisson.md#SpringBoot集成Redisson做分布式锁)
 
 ### 4 Redis穿透，击穿，雪崩
     
     Redis缓存穿透：数据库与缓存中都不存在，黑客大量访问打到数据库；（布隆过滤器/返回空对象）
     Redis缓存击穿：数据库中存在对应值，redi缓存过期，大量请求访问打到数据库；（分布式锁Redisson）
     Redis缓存雪崩：缓存大面积失效，或者重启消耗大量资源。（缓存时间设置随机，启动加到队列,冷热数据分离，预加载等，热数据均匀分布到不同缓存数据库）
+
+代码见： [Redis穿透，击穿，雪崩](https://github.com/zlk-github/common-test/blob/master/common-redis-test/src/main/java/com/zlk/redis/service/CachePenetrationService.java#Redis穿透，击穿，雪崩)
 
 ### 5 消息传递/发布订阅（非重点）
 
@@ -120,8 +125,6 @@ Redis事务相关命令：
 
 #### 8.2 主从模式
 
-
-
 #### 8.3 集群模式
 
 最少3个master节点，且每个主节点下挂一个slave节点。
@@ -129,21 +132,8 @@ Redis事务相关命令：
 
 #### 9 redis 常用命令
 
-查看全部key
+详见： [Redis常用命令](https://github.com/zlk-github/common-test/blob/master/common-redis-test/README-COMMAND.md#Redis常用命令)
 
-    keys *
-
-匹配key
-
-    keys apple*
-
-key的有效时间
-
-    ttl key
-        说明：
-        key不存在返回-2
-        key没设置过期时间返回-1
-        key有设置过期时间，返回剩余时间。（单位毫秒）
 
 
 ### 参考
