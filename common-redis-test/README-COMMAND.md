@@ -8,13 +8,29 @@ Redis相关可执行文件的主要作用
     （4）redis-check-aof ----------AOF文件修复工具
     （5）redis-check-dump --------RDB文件检查工具
 
+启动Redis集群顺序
+
+    1.启动Redis，顺序主->从
+    redis-server /usr/local/redis/redis-5.0.14/etc/redis.conf
+    
+    2.启动Sentinel，顺序主->从
+    redis-sentinel /usr/local/redis/redis-5.0.14/etc/sentinel.conf
+
 ### Redis应用级
 
-    启动服务命令： ./redis-server /usr/local/redis/redis-5.0.14/etc/redis.conf
-    启动客户端命令： ./redis-cli
-    停止服务：  ./redis-cli -p 6379 shutdown   (注：不要使用kill -9 PID,会导致备份丢数据)
+    redis/bin目录下：
+    
+    启动服务命令： redis-server /usr/local/redis/redis-5.0.14/etc/redis.conf
+    启动服务命令： redis-sentinel /usr/local/redis/redis-5.0.14/etc/sentinel.conf
+    进入redis-cli： redis-cli
+    进入redis-cli(密码123456)： redis-cli -h 127.0.0.1 -p 6379 -a 123456
     查看服务： ps aux|grep redis
     查看端口: netstat -antp | grep 6379
+    停止服务： redis-cli -p 6379 shutdown   (注：不要使用kill -9 PID,可能导致备份丢数据)
+    停止服务（密码123456）： redis-cli -a 123456 shutdown    (注：不要使用kill -9 PID,可能导致备份丢数据)
+
+    进入redis-cli： redis-cli
+         查看集群：info replication
 
 ### Redis操作命令
 
