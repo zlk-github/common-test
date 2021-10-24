@@ -1,4 +1,4 @@
-##  Redis集群方案之哨兵模式（一主二从三哨兵）
+## Redis集群方案之哨兵模式（一主二从三哨兵）
 
     Linux：conts7
 
@@ -28,134 +28,365 @@
 
 ### 2 一主二从三哨兵搭建
 
-注：
-
-    资源有限，下面将再同一台机器进行配置测试（开启不同端口Redis服务）。
-    （生产环境常规下为一台机器配置一个Redis（容灾高，成本高）。也有按虚拟机部署Redis(容灾差，成本低)）
-
 环境：
 
 |  IP地址  | 端口 | 角色 | Redis版本
 |  ----  | ----  |----  | ----  | 
-| 47.119.180.152| 6376 |redis-master,sentinel  | 5.0.14 |
-| 47.119.180.152| 6377 |redis-slave1,sentinel  | 5.0.14 |
-| 47.119.180.152| 6s78 |redis-slave2,sentinel  | 5.0.14 |
+| 192.168.2.203| 6379 |redis-master,sentinel  | 5.0.14 |
+| 192.168.2.205| 6379 |redis-slave1,sentinel  | 5.0.14 |
+| 192.168.2.206| 6379 |redis-slave2,sentinel  | 5.0.14 |
 
-Redis安装见：[Linux安装Redis教程](https://github.com/zlk-github/common-test/blob/master/common-redis-test/README-INIT.md#Linux安装Redis教程)
-
-在上面安装的路径copy出三个节点用于测试。
-
-    进入目录： cd /usr/local/redis/redis-5.0.14
-
-    copy一个做主节点（redis-6376）：cp -r /usr/local/redis/redis-5.0.14 /usr/local/redis/redis-6376
-    copy一个做从节点1（redis-6377）：cp -r /usr/local/redis/redis-5.0.14 /usr/local/redis/redis-6377
-    copy一个做从节点2（redis-6378）：cp -r /usr/local/redis/redis-5.0.14 /usr/local/redis/redis-6378
+Redis安装见：[Linux安装Redis教程](https://github.com/zlk-github/common-test/blob/master/common-redis-test/README-INIT.md# Linux安装Redis教程)
 
 
-#### 2.1 配置Redis主节点（redis-6376）
+#### 2.1 配置Redis主节点（redis-master）
 
-##### 2.1.1 修改Redis配置文件
+##### 2.1.1 主Redis配置文件redis.conf
 
     vi redis.conf
 
 redis.conf修改内容如下：
 
 ```jsx
-bind 0.0.0.0            #表示redis允许所有地址连接。默认127.0.0.1，仅允许本地连接。
-daemonize yes             #允许redis后台运行
-logfile "/var/log/redis_6376.log"    #设置redis日志存放路径
-requirepass "123456"        #设置redis密码
-protected-mode no      #设置为no，允许外部网络访问
-port 6376             #修改redis监听端口(可以自定义)
-pidfile /var/run/redis_6376.pid  #pid存放目录
-dir /usr/local/redis/redis-6376/tmp   #工作目录，需要创建好目录,可自定义
-masterauth 123456    #主从同步master的密码
+bind 0.0.0.0            # 表示redis允许所有地址连接。默认127.0.0.1，仅允许本地连接。也可以bind 192.168.2.203
+daemonize yes             # 允许redis后台运行
+logfile "/var/log/redis.log"    # 设置redis日志存放路径
+requirepass "123456"        # 设置redis密码
+protected-mode no      # 设置为no，允许外部网络访问
+port 6376             # 修改redis监听端口(可以自定义)
+pidfile /var/run/redis.pid  # pid存放目录
+dir /usr/local/redis/redis-5.0.14/tmp   # 工作目录，需要创建好目录,可自定义
+masterauth 123456    # 主从同步master的密码
 ```
-##### 修改Sentinel(哨兵)配置
+#####  2.1.2 主Redis修改Sentinel(哨兵)配置
 
     vi sentinel.conf
 
 sentinel.conf修改内容如下：
 
 ```java
-port 2700      #修改Sentinel监听端口
-daemonize yes      #允许Sentinel后台运行
-logfile "/var/log/redis-sentinel_6376.log"   #设置Sentinel日志存放路径
-dir /usr/local/redis/redis-6376/tmp   #工作目录，需要创建好目录,可自定义
 
-#redis01：master名称可自定义
-#47.119.180.152 6376 ：redis主节点IP和端口
-#2 ：表示多少个Sentinel认为redis主节点失效时，才算真正失效
-sentinel monitor redis01 47.119.180.152 6376 2    #Sentinel监听redis主节点
+port 2700 # 修改Sentinel监听端口
+daemonize yes  # 允许Sentinel后台运行     
+logfile "/var/log/redis-sentinel.log"   # 设置Sentinel日志存放路径
+dir /usr/local/redis/redis-5.0.14/tmp   # 工作目录，需要创建好目录,可自定义
 
-#配置失效时间，master会被这个sentinel主观地认为是不可用的，单位毫秒      
+# redis01：master名称可自定义
+# 192.168.2.203 6379 ：redis主节点IP和端口
+# 2 ：表示多少个Sentinel认为redis主节点失效时，才算真正失效
+sentinel monitor redis01 192.168.2.203 6379 2    # Sentinel监听redis主节点
+
+# 配置失效时间，master会被这个sentinel主观地认为是不可用的，单位毫秒      
 sentinel down-after-milliseconds redis01 10000
         
-#若sentinel在该配置值内未能完成master/slave自动切换，则认为本次failover失败。        
+# 若sentinel在该配置值内未能完成master/slave自动切换，则认为本次failover失败。        
 sentinel failover-timeout redis01 60000
 
-
-#在发生failover主备切换时最多可以有多少个slave同时对新的master进行同步。
+# 在发生failover主备切换时最多可以有多少个slave同时对新的master进行同步。
 sentinel parallel-syncs redis01 2
 
-#设置连接master和slave时的密码，注意的是sentinel不能分别为master和slave设置不同的密码，因此master和slave的密码应该设置相同
+# 设置连接master和slave时的密码，注意的是sentinel不能分别为master和slave设置不同的密码，因此master和slave的密码应该设置相同
 sentinel auth-pass redis01 123456
 ```
+注：注意：含有mymaster的配置，都必须放置在sentinel monitor mymaster 192.168.2.203 6379 2之后，否则会出现问题
 
 
-#### 2.2 配置Redis从节点1（redis-6377）
+#### 2.2 配置Redis从节点
 
-##### 2.2.1 修改Redis配置文件
+从节点1（redis-slave1）与从节点2（redis-slave1）
 
-    vi redis.conf
+##### 2.2.1 从Redis配置文件redis.conf
 
-redis.conf修改内容如下：
+复制主节点的redis.conf,修改replicaof与bind。
 
-```jsx
-bind 0.0.0.0            #表示redis允许所有地址连接。默认127.0.0.1，仅允许本地连接。
-daemonize yes             #允许redis后台运行
-logfile "/var/log/redis_6377.log"    #设置redis日志存放路径
-requirepass "123456"        #设置redis密码
-protected-mode no      #设置为no，允许外部网络访问
-port 6377             #修改redis监听端口(可以自定义)
-pidfile /var/run/redis_6377.pid  #pid存放目录
-dir /usr/local/redis/redis-6377/tmp   #工作目录，需要创建好目录,可自定义
-masterauth 123456    #主从同步master的密码
-replicaof 47.119.180.152 6376 
-```
-##### 2.2.2 修改Sentinel(哨兵)配置
+redis-slave1对应redis.conf
 
-    vi sentinel.conf
+    # 表示redis允许所有地址连接。默认127.0.0.1，仅允许本地连接。也可以bind  192.168.2.205 
+    bind 0.0.0.0            
+    # 主库为主虚拟机1的地址
+    replicaof 192.168.2.203 6379
 
-sentinel.conf修改内容如下：
+redis-slave2对应redis.conf
+
+    # 表示redis允许所有地址连接。默认127.0.0.1，仅允许本地连接。也可以bind  192.168.2.205 
+    bind 0.0.0.0            
+    # 主库为主虚拟机1的地址
+    replicaof 192.168.2.203 6379
+       
+
+   
+#####  2.2.2 从Redis修改Sentinel(哨兵)配置
+
+复制主节点的sentinel.conf即可。需要的话可以改 bind 从节点本机id
+
+    # 表示redis允许所有地址连接。默认127.0.0.1，仅允许本地连接。也可以bind  192.168.2.205 
+    bind 0.0.0.0  
+
+
+### 3 启动Redis
+
+### 3.1 设置Redis开机启动
+
+将Redis启动与配置路径添加到系统 /etc/rc.d/rc.local后保存。
+
+    进入编辑： vim /etc/rc.d/rc.local
+        添加如下内容（redis的bin目录与配置文件目录）：
+        /usr/local/redis/redis-5.0.14/bin/redis-server  /usr/local/redis/redis-5.0.14/etc/redis.conf
+
+
+### 3.2 设置软链接，方便启动服务
+
+    ln -s /usr/local/redis/redis-5.0.14/bin/redis-server /usr/bin/redis-server
+    ln -s /usr/local/redis/redis-5.0.14/bin/redis-cli /usr/bin/redis-cli
+    ln -s /usr/local/redis/redis-5.0.14/bin/redis-sentinel /usr/bin/redis-sentinel
+
+### 3.2 Redis集群启动
+
+    进入bin目录(设置软应用不需要)： cd /usr/local/redis/redis-5.0.14/bin
+    
+    启动Redis集群
+    1.启动Redis，顺序主->从
+    redis-server /usr/local/redis/redis-5.0.14/etc/redis.conf
+    
+    2.启动Sentinel，顺序主->从
+    redis-sentinel /usr/local/redis/redis-5.0.14/etc/sentinel.conf
+
+### 4访问&验证Redis集群
+
+
+#### 4.1 访问redis主节点(redis-master)
+
+    进入bin目录(设置软应用不需要)： cd /usr/local/redis/redis-5.0.14/bin
+    
+    进入redis-cli： redis-cli -h 127.0.0.1 -p 6379 -a 123456
+    
+    查看集群：info replication
+  
+master集群结果如下：
 
 ```java
-port 2701      #修改Sentinel监听端口
-daemonize yes      #允许Sentinel后台运行
-logfile "/var/log/redis-sentinel_6377.log"   #设置Sentinel日志存放路径
-dir /usr/local/redis/redis-6377/tmp   #工作目录，需要创建好目录,可自定义
-
-#redis01：master名称可自定义
-#47.119.180.152 6376 ：redis主节点IP和端口
-#2 ：表示多少个Sentinel认为redis主节点失效时，才算真正失效
-sentinel monitor redis01 47.119.180.152 6376 2    #Sentinel监听redis主节点
-
-#配置失效时间，master会被这个sentinel主观地认为是不可用的，单位毫秒      
-sentinel down-after-milliseconds redis01 10000
-        
-#若sentinel在该配置值内未能完成master/slave自动切换，则认为本次failover失败。        
-sentinel failover-timeout redis01 60000
-
-
-#在发生failover主备切换时最多可以有多少个slave同时对新的master进行同步。
-sentinel parallel-syncs redis01 2
-
-#设置连接master和slave时的密码，注意的是sentinel不能分别为master和slave设置不同的密码，因此master和slave的密码应该设置相同
-sentinel auth-pass redis01 123456
+  [root@localhost bin]# redis-cli -h 127.0.0.1 -p 6379 -a 123456
+  Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.
+  127.0.0.1:6379> info replication
+  # Replication
+  # 个人注释：当前节点为主节点
+  role:master
+  # 个人注释：从节点2个，192.168.2.205 6379与192.168.2.206 6379
+  connected_slaves:2 
+  slave0:ip=192.168.2.206,port=6379,state=online,offset=167962,lag=0
+  slave1:ip=192.168.2.205,port=6379,state=online,offset=167684,lag=1
+  master_replid:f259bbbd3b0b0c3439460c9e2f666dc68ac6166c
+  master_replid2:0000000000000000000000000000000000000000
+  master_repl_offset:167962
+  second_repl_offset:-1
+  repl_backlog_active:1
+  repl_backlog_size:1048576
+  repl_backlog_first_byte_offset:1
+  repl_backlog_histlen:167962
 ```
 
+#### 4.2 访问redis从节点1(redis-slave1)
 
-#### 查看：info replication #查看集群
+
+    进入bin目录(设置软应用不需要)： cd /usr/local/redis/redis-5.0.14/bin
+    
+    进入redis-cli： redis-cli -h 127.0.0.1 -p 6379 -a 123456
+    
+    查看集群：info replication
+  
+redis-slave1集群结果如下：
+
+```java
+127.0.0.1:6379> info replication
+# Replication
+ # 个人注释：当前节点为从节点
+role:slave
+# 个人注释：主节点192.168.2.203 6379
+master_host:192.168.2.203
+master_port:6379
+master_link_status:up
+master_last_io_seconds_ago:1
+master_sync_in_progress:0
+slave_repl_offset:249823
+slave_priority:100
+# 个人注释：从节点只读
+slave_read_only:1
+connected_slaves:0
+master_replid:f259bbbd3b0b0c3439460c9e2f666dc68ac6166c
+master_replid2:0000000000000000000000000000000000000000
+master_repl_offset:249823
+second_repl_offset:-1
+repl_backlog_active:1
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:1
+repl_backlog_histlen:249823
+```
+
+#### 4.3 访问redis从节点2(redis-slave2)
+
+    进入bin目录(设置软应用不需要)： cd /usr/local/redis/redis-5.0.14/bin
+    
+    进入redis-cli： redis-cli -h 127.0.0.1 -p 6379 -a 123456
+    
+    查看集群：info replication
+  
+redis-slave2集群结果如下：
+
+```java
+127.0.0.1:6379> info replication
+# Replication
+ # 个人注释：当前节点为从节点
+role:slave
+# 个人注释：主节点192.168.2.203 6379
+master_host:192.168.2.203
+master_port:6379
+master_link_status:up
+master_last_io_seconds_ago:0
+master_sync_in_progress:0
+slave_repl_offset:291664
+slave_priority:100
+slave_read_only:1
+connected_slaves:0
+master_replid:f259bbbd3b0b0c3439460c9e2f666dc68ac6166c
+master_replid2:0000000000000000000000000000000000000000
+master_repl_offset:291664
+second_repl_offset:-1
+repl_backlog_active:1
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:183
+repl_backlog_histlen:291482
+```
+#### 4.4 从节点只读测试(redis-slave2)
+
+哨兵模式：从节点允许读，不允许写入。
+
+    127.0.0.1:6379> set key 123456
+    (error) READONLY You can't write against a read only replica.
+
+#### 4.5 主节点写入，复制到从节点
+
+redis-master
+    
+    127.0.0.1:6379> set key1001 600
+    OK
+
+redis-slave1
+
+    127.0.0.1:6379> get key1001
+    "600"
+    
+redis-slave2
+
+    127.0.0.1:6379> get key1001
+    "600"
+
+#### 4.6 验证Redis故障转移 
+
+##### 4.6.1 停止主节点192.168.2.203（redis-master）
+ 
+    进入目录：  cd /usr/local/redis/redis-5.0.14/bin
+    
+    停止服务（密码123456）： redis-cli -a 123456 shutdown    (注：不要使用kill -9 PID,可能导致备份丢数据)
+
+
+##### 4.6.2 查看主节点（redis-slave1与redis-slave2）
+
+**原来redis-slave1**：
+
+    进入bin目录(设置软应用不需要)： cd /usr/local/redis/redis-5.0.14/bin
+    
+    进入redis-cli： redis-cli -h 127.0.0.1 -p 6379 -a 123456
+    
+    查看集群：info replication
+
+结果如下，192.168.2.205（原来从节点）变为了主节点。从节点只剩下192.168.2.206。
+原来主节点192.168.2.203被剔除。
+
+192.168.2.205集群信息。
+```java
+127.0.0.1:6379> info replication
+# Replication
+role:master
+connected_slaves:1
+slave0:ip=192.168.2.206,port=6379,state=online,offset=18702889,lag=1
+master_replid:10dc8efe5dca92037d2cc945fd16a76981afec85
+master_replid2:f259bbbd3b0b0c3439460c9e2f666dc68ac6166c
+master_repl_offset:18702889
+second_repl_offset:18664112
+repl_backlog_active:1
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:17654314
+repl_backlog_histlen:1048576
+```
+**192.168.2.206集群信息：**
+
+    进入bin目录(设置软应用不需要)： cd /usr/local/redis/redis-5.0.14/bin
+    
+    进入redis-cli： redis-cli -h 127.0.0.1 -p 6379 -a 123456
+    
+    查看集群：info replication
+
+结果如下，192.168.2.205（原来从节点1）变为了主节点。
+从节点192.168.2.206还是从节点2。
+
+192.168.2.206集群信息。
+
+```java
+127.0.0.1:6379> info replication
+# Replication
+role:slave
+master_host:192.168.2.205
+master_port:6379
+master_link_status:up
+master_last_io_seconds_ago:0
+master_sync_in_progress:0
+slave_repl_offset:18826183
+slave_priority:100
+slave_read_only:1
+connected_slaves:0
+master_replid:10dc8efe5dca92037d2cc945fd16a76981afec85
+master_replid2:f259bbbd3b0b0c3439460c9e2f666dc68ac6166c
+master_repl_offset:18826183
+second_repl_offset:18664112
+repl_backlog_active:1
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:17777608
+repl_backlog_histlen:1048576
+```
+
+##### 4.6.1 启动192.168.2.203（原来的主节点redis-master）
+
+    进入bin目录(设置软应用不需要)： cd /usr/local/redis/redis-5.0.14/bin
+    
+    启动服务：redis-server /usr/local/redis/redis-5.0.14/etc/redis.conf
+
+    进入redis-cli： redis-cli -h 127.0.0.1 -p 6379 -a 123456
+    
+    查看集群：info replication
+
+192.168.2.203（原来主节点）现在变为了从节点。主节点由变成原来的192.168.2.206（原来的从节点）。
+```java  
+127.0.0.1:6379> info replication
+# Replication
+role:slave
+master_host:192.168.2.205
+master_port:6379
+master_link_status:up
+master_last_io_seconds_ago:2
+master_sync_in_progress:0
+slave_repl_offset:18780158
+slave_priority:100
+slave_read_only:1
+connected_slaves:0
+master_replid:10dc8efe5dca92037d2cc945fd16a76981afec85
+master_replid2:0000000000000000000000000000000000000000
+master_repl_offset:18780158
+second_repl_offset:-1
+repl_backlog_active:1
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:18771309
+repl_backlog_histlen:8850
+```
 
 ### 3 Springboot2.0 集成一主二从三哨兵
 
