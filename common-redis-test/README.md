@@ -148,8 +148,9 @@ Redis事务相关命令：
     优点：能满足高可用，扩展性好。
     缺点：需要使用大量的服务器资源。
 
+#### 9 redis 性能指标与优化方案
 
-#### 9 redis 常用命令
+#### 10 redis 常用命令
 
 详见： [Redis常用命令](https://github.com/zlk-github/common-test/blob/master/common-redis-test/README-COMMAND.md#Redis常用命令)
 

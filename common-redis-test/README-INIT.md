@@ -52,11 +52,12 @@ Redis是C语言编写，需要安装C环境。
 #### 5.2 将redis-5.0.14目录下的 redis.conf 移动到 redis-5.0.14目录下的etc文件夹下。
 
     移动: mv redis.conf ./etc/
+    移动：mv sentinel.conf ./etc/
 
 #### 5.3 将mkreleasehdr.sh、redis-benchmark、redis-check-aof、redis-cli、redis-server 移动到   /usr/local/redis/redis-5.0.14//bin/ 目录下.
 
     当前切换目录到src： cd ./src/
-    移动:  mv mkreleasehdr.sh redis-benchmark redis-check-aof redis-cli redis-server /usr/local/redis/redis-5.0.14/bin/
+    移动:  mv mkreleasehdr.sh redis-benchmark redis-check-aof redis-cli redis-server redis-sentinel /usr/local/redis/redis-5.0.14/bin/
 
 Redis相关可执行文件的主要作用
 
@@ -151,6 +152,7 @@ Redis相关可执行文件的主要作用
 
     进入目录：  cd /usr/local/redis/redis-5.0.14/bin
     停止服务：  ./redis-cli -p 6379 shutdown   (注：不要使用kill -9 PID,会导致备份丢数据)
+    停止服务（密码123456）： redis-cli -a 123456 shutdown
     启动服务命令： ./redis-server /usr/local/redis/redis-5.0.14/etc/redis.conf
 
 #### 8.4 开启客户端
