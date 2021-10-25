@@ -65,7 +65,7 @@ Spring Boot 如何集成redis做缓存(默认过期时间),分布式锁，布隆
     （4）取消订阅 
         Redis采用UNSUBSCRIBE和PUNSUBSCRIBE命令取消订阅，其返回值与订阅类似。
 
-    注：不能提供消消息队列的消息持久化。
+    注：不能提供消息队列的消息持久化。
 
 场景：
 
@@ -99,7 +99,7 @@ Redis事务相关命令：
 由于Redis数据存放在内存中，定期写入磁盘（半持久化）。如果没有配置持久化，redis重启后数据会产生丢失。Redis提供了两种持久化机制，将数据保存到磁盘上，重启后从磁盘恢复数据。
 分布为RDB(Redis DataBase)和AOF(Append Only File)。
 
-**RDB**：快照方式，全量备份。将Reids在内存中的数据库记录定时dump到磁盘上的RDB持久化。
+**RDB**：快照方式，全量备份。将Redis在内存中的数据库记录定时dump到磁盘上的RDB持久化。
 
 **AOF**：日志记录方式。操作日志记录以追加方式写入文件。
 
@@ -111,7 +111,7 @@ Redis事务相关命令：
 |  数据安全性 | 丢数据 | 根据策略决定 | 
 |  轻重 | 重 | 轻| 
 
-### 8 Redis集群方案
+### 8 Redis集群方案(高可用)
 
 单机模式会不能实现高可用，从而产生以下几种解决方案。
 
@@ -148,9 +148,11 @@ Redis事务相关命令：
     优点：能满足高可用，扩展性好。
     缺点：需要使用大量的服务器资源。
 
-#### 9 redis 性能指标与优化方案
+#### 9 Redis 性能指标与优化方案
 
-#### 10 redis 常用命令
+详见： [Redis 性能指标与优化方案](https://github.com/zlk-github/common-test/blob/master/common-redis-test/README-OPTIMIZE.md#Redis性能指标与优化方案)
+
+#### 10 Redis 常用命令
 
 详见： [Redis常用命令](https://github.com/zlk-github/common-test/blob/master/common-redis-test/README-COMMAND.md#Redis常用命令)
 

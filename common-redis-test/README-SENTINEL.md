@@ -1,4 +1,4 @@
-## Redis集群方案之哨兵模式（一主二从三哨兵）
+## Redis集群方案(高可用)之哨兵模式（一主二从三哨兵）
 
     Linux：conts7
 
@@ -95,7 +95,7 @@ sentinel auth-pass redis01 123456
 
 从节点1（redis-slave1）与从节点2（redis-slave1）
 
-##### 2.2.1 从Redis配置文件redis.conf
+##### 2.2.1 从节点Redis配置文件redis.conf
 
 复制主节点的redis.conf,修改replicaof与bind。
 
@@ -112,8 +112,6 @@ redis-slave2对应redis.conf
     bind 0.0.0.0            
     # 主库为主虚拟机1的地址
     replicaof 192.168.2.203 6379
-       
-
    
 #####  2.2.2 从Redis修改Sentinel(哨兵)配置
 
@@ -122,7 +120,6 @@ redis-slave2对应redis.conf
     # 表示redis允许所有地址连接。默认127.0.0.1，仅允许本地连接。也可以bind  192.168.2.205 
     bind 0.0.0.0  
 
-
 ### 3 启动Redis
 
 ### 3.1 设置Redis开机启动
@@ -130,9 +127,9 @@ redis-slave2对应redis.conf
 将Redis启动与配置路径添加到系统 /etc/rc.d/rc.local后保存。
 
     进入编辑： vim /etc/rc.d/rc.local
-        添加如下内容（redis的bin目录与配置文件目录）：
+        添加如下内容（redis的bin目录启动相关与配置文件目录）：
         /usr/local/redis/redis-5.0.14/bin/redis-server  /usr/local/redis/redis-5.0.14/etc/redis.conf
-
+        /usr/local/redis/redis-5.0.14/bin/redis-sentinel  /usr/local/redis/redis-5.0.14/etc/sentinel.conf
 
 ### 3.2 设置软链接，方便启动服务
 

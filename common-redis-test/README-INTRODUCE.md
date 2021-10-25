@@ -103,6 +103,12 @@ Redis怎样防止异常数据不丢失
         appendfilename "appendonly.aof"
         appendfsync everysec
 
+##### 1.5.4 Redis事务
+
+##### 1.5.5 什么场景适合使用缓存
+
+##### 1.5.3 Redis的IO多路复用
+
 ### 参考
 
     Redis集群 https://www.cnblogs.com/yufeng218/p/13688582.html
