@@ -20,6 +20,8 @@ Spring Boot 如何集成redis做缓存(默认过期时间),分布式锁，布隆
         1.5.2 Redis为什么是单线程的
         1.5.3 简述Redis的数据淘汰机制
         1.5.4 Redis怎样防止异常数据不丢失
+        1.5.5 Redis实现原理
+        1.5.6 Redis高可用与数据同步
 
 安装见：[Linux安装Redis教程](https://github.com/zlk-github/common-test/blob/master/common-redis-test/README-INIT.md#Linux安装Redis教程)
 
