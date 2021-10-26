@@ -49,7 +49,7 @@ Redis是C语言编写，需要安装C环境。
     创建bin目录：mkdir bin  
     创建etc目录：mkdir etc
 
-#### 5.2 将redis-5.0.14目录下的 redis.conf 移动到 redis-5.0.14目录下的etc文件夹下。
+#### 5.2 将redis-5.0.14目录下的 redis.conf与sentinel.conf移动到 redis-5.0.14目录下的etc文件夹下。
 
     移动: mv redis.conf ./etc/
     移动：mv sentinel.conf ./etc/
@@ -119,6 +119,7 @@ Redis相关可执行文件的主要作用
     限制端口:
         （1）比如我们现在需要关掉打开的22端口
         firewall-cmd --zone=public --remove-port=22/tcp --permanent
+        或者firewall-cmd --zone=public --add-port=22/tcp --permanent
         （2）重新载入一下防火墙设置，使设置生效
         firewall-cmd --reload
 
@@ -168,7 +169,13 @@ Redis相关可执行文件的主要作用
 ### 9 如果是阿里云服务器需要开放6379端口，检查是否设置IP白名单。（--待补充）
 
 安全组配置见：https://help.aliyun.com/document_detail/25471.html?spm=a2c6h.13066369.0.0.45b56c86u5ESFx&userCode=28kqeewo
+           https://help.aliyun.com/document_detail/25443.html
 
+**踩坑**：
+
+需要将服务器加入安全组。
+
+![Image text](./images/阿里云加入安全组.png)
 
 
 ### 10 检查外部是否可连接上（开发测试使用）（--待补充）
