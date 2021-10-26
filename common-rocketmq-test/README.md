@@ -1,0 +1,76 @@
+##  common-rocketmq-test
+
+Spring Boot 如何集成Rocketmq做消息队列
+
+**源码地址见**：
+
+    1、测试项目github地址：https://github.com/zlk-github/common-test/tree/master/common-rocketmq-test
+    2、公共包github地址：git@github.com:zlk-github/common.git     --(https://github.com/zlk-github/common)
+
+### 1 Rocketmq 介绍
+
+详见：* [Rocketmq介绍与常见问题汇总](https://github.com/zlk-github/common-test/blob/master/common-rocketmq-test/README-INTRODUCE.md#Rocketmq介绍与常见问题汇总)
+
+1.1 MQ 比较（优劣）
+
+1.2 Rocketmq介绍与基本概念
+
+1.3 Rocketmq 常见问题
+
+    Rocketmq 使用场景
+    RocketMQ消费模式有几种
+    RocketMQ基本概念
+    消息异步情况下的可靠性传输
+        生产者丢失：消息重试（ACK+失败入库。事务开启。防止发送失败）
+        MQ丢失：数据防止丢失（消息、队列、交换器等持久化。集群部署）
+        消费者丢失：数据消费丢失（手动ACK）
+        消费失败大量积压的数据怎么解决，积压到磁盘上线，数据被删除了怎么办。
+    RocketMQ为什么速度快
+    RocketMQ事务
+    重复消费和幂等性问题
+    如何保证消息的顺序
+    高可用实现与数据同步
+    RocketMQ实现原理
+
+安装见：[Linux安装Rocketmq教程](https://github.com/zlk-github/common-test/blob/master/common-rocketmq-test/README-INIT.md#Linux安装Rocketmq教程)
+
+
+### 2 Spring Boot 集成Rocketmq做消息队列
+
+主要测试消息发送与消费，并解决如下问题。
+  
+    Rocketmq 使用场景
+    RocketMQ消费模式有几种
+    RocketMQ基本概念
+    消息异步情况下的可靠性传输
+        生产者丢失：消息重试（ACK+失败入库。事务开启。防止发送失败）
+        MQ丢失：数据防止丢失（消息、队列、交换器等持久化。集群部署）
+        消费者丢失：数据消费丢失（手动ACK）
+        消费失败大量积压的数据怎么解决，积压到磁盘上线，数据被删除了怎么办。
+    RocketMQ为什么速度快
+    RocketMQ事务
+    重复消费和幂等性问题
+    如何保证消息的顺序
+    高可用实现与数据同步
+    RocketMQ实现原理
+
+### 4 RocketMQ实现原理
+
+### 3 Rocketmq集群方案
+
+#### 4 Rocketmq 常用命令
+
+详见： [Rocketmq常用命令](https://github.com/zlk-github/common-test/blob/master/common-rocketmq-test/README-COMMAND.md#Rocketmq常用命令)
+
+
+### 参考
+
+    mq比较https://www.jianshu.com/p/0b1d1fe84e70
+
+    Rocketmq源码(重点)：https://github.com/apache/rocketmq/tree/master/docs/cn
+ 
+    Rocketmq官网：http://rocketmq.apache.org/
+    
+    Rocketmq文档：rocketmq文档地址：http://rocketmq.apache.org/docs/quick-start/
+
+    RocketMQ相关问题：https://blog.csdn.net/QGhurt/article/details/114630705
