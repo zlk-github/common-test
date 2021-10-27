@@ -16,6 +16,16 @@
         ./mqadmin {command} {args}
 
 
+    1：启动命令：
+        nohup sh mqnamesrv >/mnt/logs/rocketmqlogs/mqnamesrv.log 2>&1 &
+        nohup sh mqbroker -c broker.conf  >/mnt/logs/rocketmqlogs/broker.log 2>&1 &    
+        nohup java -jar rocketmq-console.jar >/mnt/logs/rocketmqlogs/consolelog.out 2>&1 &
+    
+    2：关闭命令： 
+        关闭namesrv服务：sh mqshutdown namesrv
+        关闭broker服务 ：sh mqshutdown broker
+
+
 ### 1 Linux安装JDK8
 
 linux位数：getconf LONG_BIT
@@ -95,7 +105,10 @@ Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf
 
     切换目录： cd /usr/local/rocketmq/rocketmq-4.6.1/bin
 
-    选择配置文件启动broker： nohup sh mqbroker -c /usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf >/dev/null 2>&1 &
+    选择配置文件启动broker：
+        nohup sh mqbroker -n localhost:9876
+        或者
+        nohup sh mqbroker -c /usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf >/dev/null 2>&1 &
 
     netstat -ntlp
 
@@ -103,6 +116,126 @@ Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf
     查看启动状态：jps
 
 
+3.3  防火墙已放行端口9876 ：
+
+    （1）如我们需要开启XShell连接时需要使用的9876端口
+    firewall-cmd --zone=public --add-port=9876/tcp --permanent
+    其中--permanent的作用是使设置永久生效，不加的话机器重启之后失效
+    （2）重新载入一下防火墙设置，使设置生效
+    firewall-cmd --reload
+    （3）可通过如下命令查看是否生效
+    firewall-cmd --zone=public --query-port=9876/tcp
+
+### 4 rocketmq-console下载、部署
+
+    本地需要jdk与maven
+
+4.1 下载rocketmq-console,在本地编译后打包成jar
+
+4.1.1 下载
+
+git地址：https://github.com/apache/rocketmq-externals/tree/release-rocketmq-console-1.0.0
+
+    clone： git clone https://github.com/apache/rocketmq-externals.git
+
+    切换到分支：git checkout -b release-rocketmq-console-1.0.0
+
+4.1.2 修改配置文件（rocketmq-connect-runtime）
+     src/main/resources/connect.conf
+
+    #访问端口
+    server.port=8080
+    
+    ### SSL setting  默认就行
+    #server.ssl.key-store=classpath:rmqcngkeystore.jks
+    #server.ssl.key-store-password=rocketmq
+    #server.ssl.keyStoreType=PKCS12
+    #server.ssl.keyAlias=rmqcngkey
+    
+    #spring.application.index=true
+    spring.application.name=rocketmq-console
+    spring.http.encoding.charset=UTF-8
+    spring.http.encoding.enabled=true
+    spring.http.encoding.force=true
+    #logback配置文件路径，先默认即可
+    logging.config=classpath:logback.xml
+    #if this value is empty,use env value rocketmq.config.namesrvAddr  NAMESRV_ADDR | now, you can set it in ops page.default localhost:9876
+    #Name Server地址，修改成你自己的服务地址。多个地址用英文分号“;”隔开
+    rocketmq.config.namesrvAddr=localhost:9876
+    #if you use rocketmq version < 3.5.8, rocketmq.config.isVIPChannel should be false.default true
+    rocketmq.config.isVIPChannel=
+    #rocketmq-console's data path:dashboard/monitor
+    rocketmq.config.dataPath=/tmp/rocketmq-console/data
+    #set it false if you don't want use dashboard.default true
+    rocketmq.config.enableDashBoardCollect=true
+    #set the message track trace topic if you don't want use the default one
+    rocketmq.config.msgTrackTopicName=
+    rocketmq.config.ticketKey=ticket
+    
+    #Must create userInfo file: ${rocketmq.config.dataPath}/users.properties if the login is required
+    rocketmq.config.loginRequired=false
+    
+    
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
+workerId=DEFAULT_WORKER_1
+storePathRootDir=/xxx/storeRoot
+
+## Http port for user to access REST API
+httpPort=8082
+
+# Rocketmq namesrvAddr
+namesrvAddr=localhost:9876
+
+# RocketMQ acl
+aclEnable=false
+accessKey=rocketmq
+secretKey=12345678
+
+# Source or sink connector jar file dir,The default value is rocketmq-connect-sample
+pluginPaths=/xxx/connector-plugins
+
+4.1.3  编译后打包jar
+
+    java打包，该出不再单独说明，可以使用idea协助编译打包。
+
+    mvn clean package -Dmaven.test.skip=true
+
+4.2 上传到linux并启动
+ 
+    切换目录：cd /usr/local/rocketmq/
+    
+    Xshell上传：rz
+    
+    启动：java -jar target/rocketmq-console-ng-1.0.0.jar
+    
+    注释：
+        #如果配置文件没有填写Name Server的话，可以在启动项目时指定namesrvAddr
+        $ java -jar target/rocketmq-console-ng-1.0.0.jar --rocketmq.config.namesrvAddr='localhost:9876'
+        
+        #因为本文在打包时配置了namesrvAddr，故而执行如下命令
+        $ java -jar target/rocketmq-console-ng-1.0.0.jar
+
+执行成功，访问页面：
+
+    http://ip:8080/rocketmq
+
+### 5 控制台的使用
+
+ 
 ### 参考
 
 
@@ -114,4 +247,6 @@ Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf
 
     安装教程：https://blog.csdn.net/darendu/article/details/103539968 
              https://blog.csdn.net/qq_41463655/article/details/101907665
+             https://blog.csdn.net/so_geili/article/details/90142461
 
+    https://www.jianshu.com/p/5f70e34448ce
