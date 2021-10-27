@@ -182,7 +182,7 @@ Redis相关可执行文件的主要作用
 
 注：连接需要使用外网IP与开放的端口。
 
-    windows测试远程主机和Redis端口： telnet ip Redis端口
+    windows测试远程主机和Redis端口： telnet ip 6379
     或者使用RedisDesktopManager连接测试
 
 
