@@ -18,9 +18,9 @@
 启动与关闭
 
     1：启动命令：
-        nohup sh mqnamesrv >/mnt/logs/rocketmqlogs/mqnamesrv.log 2>&1 &
-        nohup sh mqbroker -c broker.conf  >/mnt/logs/rocketmqlogs/broker.log 2>&1 &    
-        nohup java -jar rocketmq-console.jar >/mnt/logs/rocketmqlogs/consolelog.out 2>&1 &
+        nohup sh mqnamesrv >/usr/local/rocketmq/rocketmq-4.6.1/log/mqnamesrv.log 2>&1 &
+        nohup sh mqbroker -c /usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf >broker.log 2>&1 &
+        nohup java -jar rocketmq-console-ng-1.0.0.jar --rocketmq.config.namesrvAddr='ip:9876' >out.log 2>&1 &
     
     2：关闭命令： 
         关闭namesrv服务：sh mqshutdown namesrv
@@ -111,7 +111,7 @@ Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf
     选择配置文件启动broker：
         nohup sh mqbroker -n localhost:9876
         或者
-        nohup sh mqbroker -c /usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf >/dev/null 2>&1 &
+        nohup sh mqbroker -c /usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf >broker.log 2>&1 &
 
     netstat -ntlp
 
@@ -198,7 +198,7 @@ git地址：https://github.com/apache/rocketmq-externals/tree/release-rocketmq-c
     
     注释：
         #如果配置文件没有填写Name Server的话，可以在启动项目时指定namesrvAddr
-        $ nohup java -jar rocketmq-console-ng-1.0.0.jar --rocketmq.config.namesrvAddr='47.119.180.152:9876' >out.log 2>&1 &
+        $ nohup java -jar rocketmq-console-ng-1.0.0.jar --rocketmq.config.namesrvAddr='ip:9876' >out.log 2>&1 &
         
         #因为本文在打包时配置了namesrvAddr，故而执行如下命令
         $ nohup java -jar rocketmq-console-ng-1.0.0.jar >out.log 2>&1 &
@@ -209,7 +209,8 @@ git地址：https://github.com/apache/rocketmq-externals/tree/release-rocketmq-c
 
 ### 5 控制台的使用
 
- 
+![Image text](./images/rocketmq管理界面.png)
+
 ### 参考
 
 
