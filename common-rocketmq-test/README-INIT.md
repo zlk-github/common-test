@@ -2,7 +2,7 @@
 
     Linux：conts7
 
-    安装JDK8: RocketMQ java编写，需要jdk环境
+    安装JDK8与Maven: RocketMQ java编写，需要java环境
         官网下载网页链接：https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 
     Rocketmq版本: 5.0.14
@@ -15,6 +15,7 @@
         进入RocketMQ安装位置，在bin目录下执行
         ./mqadmin {command} {args}
 
+启动与关闭
 
     1：启动命令：
         nohup sh mqnamesrv >/mnt/logs/rocketmqlogs/mqnamesrv.log 2>&1 &
@@ -50,6 +51,8 @@ JDK8官网下载网页链接：https://www.oracle.com/technetwork/java/javase/do
 
     刷新配置
     source /etc/profile
+
+maven 安装省略，我编译打包使用的windows本地环境。
 
 ### 2 Rocketmq 下载安装
 
@@ -116,35 +119,39 @@ Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf
     查看启动状态：jps
 
 
-3.3  防火墙已放行端口9876 ：
+3.3  防火墙已放行端口9876与8086 ：
 
-    （1）如我们需要开启XShell连接时需要使用的9876端口
+    （1）如我们需要开启XShell连接时需要使用的9876端口与8086端口
     firewall-cmd --zone=public --add-port=9876/tcp --permanent
+    firewall-cmd --zone=public --add-port=8086/tcp --permanent
     其中--permanent的作用是使设置永久生效，不加的话机器重启之后失效
     （2）重新载入一下防火墙设置，使设置生效
     firewall-cmd --reload
     （3）可通过如下命令查看是否生效
     firewall-cmd --zone=public --query-port=9876/tcp
+    firewall-cmd --zone=public --query-port=8086/tcp
 
 ### 4 rocketmq-console下载、部署
 
     本地需要jdk与maven
 
-4.1 下载rocketmq-console,在本地编译后打包成jar
+#### 4.1 下载rocketmq-console,在本地编译后打包成jar
 
-4.1.1 下载
+##### 4.1.1 下载
 
 git地址：https://github.com/apache/rocketmq-externals/tree/release-rocketmq-console-1.0.0
 
     clone： git clone https://github.com/apache/rocketmq-externals.git
 
-    切换到分支：git checkout -b release-rocketmq-console-1.0.0
+    进入rocketmq-externals下切换到分支：git checkout release-rocketmq-console-1.0.0
 
-4.1.2 修改配置文件（rocketmq-connect-runtime）
-     src/main/resources/connect.conf
+**项目**：rocketmq-console
+
+##### 4.1.2 修改配置文件application.properties
+
 
     #访问端口
-    server.port=8080
+    server.port=8086
     
     ### SSL setting  默认就行
     #server.ssl.key-store=classpath:rmqcngkeystore.jks
@@ -174,64 +181,31 @@ git地址：https://github.com/apache/rocketmq-externals/tree/release-rocketmq-c
     
     #Must create userInfo file: ${rocketmq.config.dataPath}/users.properties if the login is required
     rocketmq.config.loginRequired=false
-    
-    
-# Licensed to the Apache Software Foundation (ASF) under one or more
-# contributor license agreements.  See the NOTICE file distributed with
-# this work for additional information regarding copyright ownership.
-# The ASF licenses this file to You under the Apache License, Version 2.0
-# (the "License"); you may not use this file except in compliance with
-# the License.  You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
 
-workerId=DEFAULT_WORKER_1
-storePathRootDir=/xxx/storeRoot
-
-## Http port for user to access REST API
-httpPort=8082
-
-# Rocketmq namesrvAddr
-namesrvAddr=localhost:9876
-
-# RocketMQ acl
-aclEnable=false
-accessKey=rocketmq
-secretKey=12345678
-
-# Source or sink connector jar file dir,The default value is rocketmq-connect-sample
-pluginPaths=/xxx/connector-plugins
-
-4.1.3  编译后打包jar
+##### 4.1.3  编译后打包jar
 
     java打包，该出不再单独说明，可以使用idea协助编译打包。
 
     mvn clean package -Dmaven.test.skip=true
 
-4.2 上传到linux并启动
+#### 4.2 上传到linux并启动
  
     切换目录：cd /usr/local/rocketmq/
     
     Xshell上传：rz
     
-    启动：java -jar target/rocketmq-console-ng-1.0.0.jar
+    启动：nohup java -jar rocketmq-console-ng-1.0.0.jar >out.log 2>&1 &
     
     注释：
         #如果配置文件没有填写Name Server的话，可以在启动项目时指定namesrvAddr
-        $ java -jar target/rocketmq-console-ng-1.0.0.jar --rocketmq.config.namesrvAddr='localhost:9876'
+        $ nohup java -jar rocketmq-console-ng-1.0.0.jar --rocketmq.config.namesrvAddr='47.119.180.152:9876' >out.log 2>&1 &
         
         #因为本文在打包时配置了namesrvAddr，故而执行如下命令
-        $ java -jar target/rocketmq-console-ng-1.0.0.jar
+        $ nohup java -jar rocketmq-console-ng-1.0.0.jar >out.log 2>&1 &
 
 执行成功，访问页面：
 
-    http://ip:8080/rocketmq
+    http://ip:8086/rocketmq
 
 ### 5 控制台的使用
 
