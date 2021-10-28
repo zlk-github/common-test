@@ -1,4 +1,4 @@
-##  Linux安装Rocketmq教程
+##  Linux安装RocketMQ教程
 
     Linux：conts7
 
@@ -29,7 +29,12 @@
 
 ### 1 Linux安装JDK8
 
-linux位数：getconf LONG_BIT
+JDK安装包获取：
+
+    链接：https://pan.baidu.com/s/1z4XxpT_RmT6SafgeSmVQUQ 
+    提取码：fl83
+
+linux位数查看：getconf LONG_BIT
 
 JDK8官网下载网页链接：https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 
@@ -54,16 +59,23 @@ JDK8官网下载网页链接：https://www.oracle.com/technetwork/java/javase/do
 
 maven 安装省略，我编译打包使用的windows本地环境。
 
-### 2 Rocketmq 下载安装
+### 2 RocketMQ 下载安装
 
-2.1 下载
+RocketMQ资源获取
+
+    rocketmq-all-4.6.1-bin-release
+    链接：https://pan.baidu.com/s/1yb4mpNVxU7qABBgRk-MZmw 
+    提取码：k3z0
+
+  
+#### 2.1 下载
 
 http://rocketmq.apache.org/dowloading/releases/
 
 ![Image text](./images/rocketmq下载地址.png)
 
 
-2.2 Xshell上传zip并解压
+#### 2.2 Xshell上传zip并解压
 
     切换目录：cd /usr/local
 
@@ -96,7 +108,7 @@ http://rocketmq.apache.org/dowloading/releases/
 
 Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf
 
-3.1 bin目录下启动nameserve
+#### 3.1 bin目录下启动nameserve
 
     切换目录：cd /usr/local/rocketmq/rocketmq-4.6.1/bin
 
@@ -104,7 +116,7 @@ Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf
     
     启动是否成功的日志命令：tail -f ~/logs/rocketmqlogs/namesrv.log
 
-3.2 bin目录下启动broker
+#### 3.2 bin目录下启动broker
 
     切换目录： cd /usr/local/rocketmq/rocketmq-4.6.1/bin
 
@@ -119,7 +131,7 @@ Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf
     查看启动状态：jps
 
 
-3.3  防火墙已放行端口9876与8086 ：
+#### 3.3  防火墙已放行端口9876与8086 ：
 
     （1）如我们需要开启XShell连接时需要使用的9876端口与8086端口
     firewall-cmd --zone=public --add-port=9876/tcp --permanent
@@ -137,6 +149,12 @@ Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf
 
 #### 4.1 下载rocketmq-console,在本地编译后打包成jar
 
+编译好的rocketmq-console.jar资源获取
+
+    rocketmq-console-ng-1.0.0.jar
+    链接：https://pan.baidu.com/s/1yb4mpNVxU7qABBgRk-MZmw 
+    提取码：k3z0
+    
 ##### 4.1.1 下载
 
 git地址：https://github.com/apache/rocketmq-externals/tree/release-rocketmq-console-1.0.0

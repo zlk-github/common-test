@@ -62,13 +62,21 @@ Spring Boot 集成Redis缓存工具类。
 Redis和Memcached的其他区别如下：
 
     Redis和Memcached都是将数据存放在内存中，都是内存数据库。不过Memcached还可用于缓存其他东西，例如图片、视频等等；
+    
     Redis不仅仅支持简单的K/V类型的数据，同时还提供List，Set，Hash等数据结构的存储；
+    
     虚拟内存–Redis当物理内存用完时，可以将一些很久没用到的Value 交换到磁盘；
+    
     过期策略–Memcached在set时就指定，例如:set key1 0 0 8,即永不过期。Redis可以通过例如expire 设定，例如:expire name 10；
+    
     分布式–设定Memcached集群，利用magent做一主多从;Redis可以做一主多从。都可以一主一从；
+    
     存储数据安全–Memcached挂掉后，数据没了；Redis可以定期保存到磁盘（持久化）；
+    
     灾难恢复–Memcached挂掉后，数据不可恢复; Redis数据丢失后可以通过AOF恢复；
+    
     Redis支持数据的备份，即Master-Slave模式的数据备份；
+    
     应用场景不一样：Redis出来作为NoSQL数据库使用外，还能用做消息队列、数据堆栈和数据缓存等；Memcached适合于缓存SQL语句、数据集、用户临时性数据、延迟查询数据和Session等。
 
 ##### 1.2.2 什么场景适合使用缓存
@@ -1366,7 +1374,7 @@ public class RedisUtilTest {
 
 -- 适用场景
 
-    访问并发高，共享型（也不能量大），数据少且变动少的数据适合存放到Redis。如分布式共享的token,数据字典，分布式锁标记等。
+    访问并发高，共享型（也不能量大,内存有限），数据少且变动少的数据适合存放到Redis。如分布式共享的token、数据字典、地区、热门的排行榜数据、分布式锁标记等。
 
 -- 注意事项
 
@@ -1380,6 +1388,8 @@ public class RedisUtilTest {
 ![Image text](./images/redis应用缓存.jpg)
 
 redis缓存在项目中见项目：
+
+    可以使用注解或者调用方法实现同样的效果，下面演示调用方法实现。
 
 
 ### 参考
