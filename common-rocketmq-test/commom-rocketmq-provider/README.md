@@ -24,3 +24,5 @@ Rocketmq生产者负责把消息推送到Rocketmq供消费者消费。
     Rocketmq文档：rocketmq文档地址：http://rocketmq.apache.org/docs/quick-start/
 
     RocketMQ相关问题：https://blog.csdn.net/QGhurt/article/details/114630705
+
+    集成到springboot2.0 :https://blog.csdn.net/zxl646801924/article/details/105659481/

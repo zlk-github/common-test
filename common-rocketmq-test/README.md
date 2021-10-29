@@ -39,9 +39,9 @@ Spring Boot 如何集成RocketMQ做消息队列
 
 主要测试消息发送与消费，并解决如下问题。
   
-    Rocketmq 使用场景
-    RocketMQ消费模式有几种
     RocketMQ基本概念
+    Rocketmq 使用场景
+    RocketMQ生产消费模式有几种
     消息异步情况下的可靠性传输
         生产者丢失：消息重试（ACK+失败入库。事务开启。防止发送失败）
         MQ丢失：数据防止丢失（消息、队列、交换器等持久化。集群部署）
@@ -56,7 +56,7 @@ Spring Boot 如何集成RocketMQ做消息队列
 
 ### 4 RocketMQ实现原理
 
-### 3 RocketMQ集群方案
+### 3 RocketMQ集群方案（高可用）
 
 ### 3 RocketMQ性能指标与优化方案
 
