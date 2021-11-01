@@ -1,5 +1,7 @@
 ##  commom-rocketmq-provider
 
+**swagger** : http://localhost:8031/swagger-ui.html
+
 Rocketmq生产者负责把消息推送到Rocketmq供消费者消费。
 
 集群消费模式（Clustering）：1对1发送。

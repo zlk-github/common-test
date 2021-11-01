@@ -1,10 +1,9 @@
-package com.zlk.provider.config;
+package com.zlk.producer.config;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,14 +37,15 @@ public class RocketMQProviderCofig {
      */
     @Bean
     /**prefix为配置文件前缀。name为配置的名字。value为配置的值。havingValue是与配置的值（value）对比值,当两个值相同返回true,配置类生效。*/
-    @ConditionalOnProperty(prefix = "rocketmq.producer",value = "isOnOff",havingValue = "on")
+    // @ConditionalOnProperty(prefix = "rocketmq.producer",value = "isOnOff",havingValue = "on")
+    // 需要使用spring.rocketmq配置
     public DefaultMQProducer defaultMqProducer() {
         log.info("defaultMQProducer开始创建-------------------------------");
         DefaultMQProducer defaultMqProducer = new DefaultMQProducer(groupName);
         //启动
         try {
             // 消息分组
-            // mq ip与端口
+            // rocketmq ip与端口
             defaultMqProducer.setNamesrvAddr(namesrvAddr);
             defaultMqProducer.setVipChannelEnabled(false);
             //消息最大长度

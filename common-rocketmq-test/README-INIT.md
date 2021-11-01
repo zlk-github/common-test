@@ -108,6 +108,13 @@ http://rocketmq.apache.org/dowloading/releases/
 
 Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf
 
+    允许自动创建Topic
+    autoCreateTopicEnable=true
+
+或者手动创建：Topic 
+
+    sh ./mqadmin updateTopic -n localhost:9876 -b localhost:10911 -t topicname
+
 #### 3.1 bin目录下启动nameserve
 
     切换目录：cd /usr/local/rocketmq/rocketmq-4.6.1/bin
@@ -115,6 +122,8 @@ Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf
     启动nameserve： nohup sh mqnamesrv &
     
     启动是否成功的日志命令：tail -f ~/logs/rocketmqlogs/namesrv.log
+
+![Image text](./images/nameserve.jpg)
 
 #### 3.2 bin目录下启动broker
 
