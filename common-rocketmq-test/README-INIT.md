@@ -18,8 +18,8 @@
 启动与关闭
 
     1：启动命令：
-        nohup sh mqnamesrv >/usr/local/rocketmq/rocketmq-4.6.1/log/mqnamesrv.log 2>&1 &
-        nohup sh mqbroker -c /usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf >broker.log 2>&1 &
+        nohup sh mqnamesrv &
+        nohup sh mqbroker -n 47.119.180.152:9876 autoCreateTopicEnable=true &
         nohup java -jar rocketmq-console-ng-1.0.0.jar --rocketmq.config.namesrvAddr='ip:9876' >out.log 2>&1 &
     
     2：关闭命令： 
@@ -111,6 +111,23 @@ Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf
     允许自动创建Topic
     autoCreateTopicEnable=true
 
+    broker没有自动创建topic
+    新版本中都是默认autoCreateTopicEnable=true
+    启动./mqbroker -n 127.0.0.1:9876 -p -p是查看配置信息
+    查看autoCreateTopicEnable的值是否为true
+
+    Topic的信息
+    sh mqadmin topicList -n 47.119.180.152:9876 
+    sh mqadmin topicstatus -n 192.168.1.23:9876 -t topicWarning
+
+    创建topic
+    sh mqadmin updateTopic -n 192.168.1.23:9876 -b XXX:10911 -t ESOrderListTopic
+
+    sh mqadmin updateTopic -n 47.119.180.152:9876 -b 47.119.180.152:10911 -t orderTopic-1001
+
+    sh bin/mqadmin updateTopic -c DefaultCluster -n localhost:9876 -t threezto-test -r 12 -w 12
+
+
 或者手动创建：Topic 
 
     sh ./mqadmin updateTopic -n localhost:9876 -b localhost:10911 -t topicname
@@ -130,7 +147,7 @@ Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf
     切换目录： cd /usr/local/rocketmq/rocketmq-4.6.1/bin
 
     选择配置文件启动broker：
-        nohup sh mqbroker -n localhost:9876
+        nohup sh mqbroker -n localhost:9876 autoCreateTopicEnable=true &
         或者
         nohup sh mqbroker -c /usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf >broker.log 2>&1 &
 
@@ -252,3 +269,5 @@ git地址：https://github.com/apache/rocketmq-externals/tree/release-rocketmq-c
              https://blog.csdn.net/so_geili/article/details/90142461
 
     https://www.jianshu.com/p/5f70e34448ce
+
+    安装教程（详细）https://www.freesion.com/article/2834981885/
