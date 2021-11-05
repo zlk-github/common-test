@@ -86,7 +86,6 @@
             <resource>
                 <directory>src/main/resources/profiles/${profiles.dir}</directory>
             </resource>
-            <!-- Maven只打包src/main/profile目录下的application-${active.profile}.properties和log4j2-${active.profile}.xml文件-->
             <resource>
                 <directory>src/main/resources/</directory>
                 <!-- **/*.properties 是指包括根目录或子目录所有properties类型的文件 -->
@@ -95,8 +94,6 @@
                     <exclude>generator/*</exclude>
                     <exclude>profiles/*/*</exclude>
                 </excludes>
-                <!-- filtering必须为true，才可以使用环境变量、pom文件里定义的属性和指定配置文件里的属性来替换属性文件(*.properties)里的变量 -->
-                <filtering>true</filtering>
             </resource>
         </resources>
 
