@@ -17,10 +17,14 @@
 
 启动与关闭
 
+    rocketmq/bin目录下
+
     1：启动命令：
         nohup sh mqnamesrv &
-        nohup sh mqbroker -n 47.119.180.152:9876 autoCreateTopicEnable=true &
-        nohup java -jar rocketmq-console-ng-1.0.0.jar --rocketmq.config.namesrvAddr='ip:9876' >out.log 2>&1 &
+            查看日志命令：日志命令：tail -f ~/logs/rocketmqlogs/namesrv.log
+        nohup sh mqbroker -n 47.119.180.152:9876 -c /usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf autoCreateTopicEnable=true &   （注：mq集群下自动创建top是有问题的autoCreateTopicEnable=true）
+            查看日志命令：tail -f ~/logs/rocketmqlogs/broker.log
+        nohup java -jar rocketmq-console-ng-1.0.0.jar --rocketmq.config.namesrvAddr='47.119.180.152:9876' >out.log 2>&1 &
     
     2：关闭命令： 
         关闭namesrv服务：sh mqshutdown namesrv
@@ -67,7 +71,6 @@ RocketMQ资源获取
     链接：https://pan.baidu.com/s/1yb4mpNVxU7qABBgRk-MZmw 
     提取码：k3z0
 
-  
 #### 2.1 下载
 
 http://rocketmq.apache.org/dowloading/releases/
@@ -91,24 +94,65 @@ http://rocketmq.apache.org/dowloading/releases/
 
     cd /usr/local/rocketmq/rocketmq-4.6.1/bin
 
-    启动参数:虚拟机内存不够，可能启动失败，可以更改内存。（服务器上不需要改）
+    启动参数:虚拟机内存不够，可能启动失败，可以更改内存。（服务器上按需要改）
     vi runserver.sh
          #JAVA_OPT="${JAVA_OPT} -server -Xms4g -Xmx4g -Xmn2g -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=320m"
          改为：
-         #JAVA_OPT="${JAVA_OPT} -server -Xms128M -Xmx128M -Xmn128M -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=128M"
+         #JAVA_OPT="${JAVA_OPT} -server -Xms256M -Xmx256M -Xmn128M -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=128M"
 
 
     vi runbroker.sh
         #JAVA_OPT="${JAVA_OPT} -server -Xms8g -Xmx8g -Xmn4g"
         改为：
-        JAVA_OPT="${JAVA_OPT} -server -Xms128M -Xmx128M -Xmn128M"
+        JAVA_OPT="${JAVA_OPT} -server -Xms256M -Xmx256M -Xmn128M"
 
 
 ### 3 Rocketmq启动
 
 Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf
 
-    允许自动创建Topic
+需要外网能访问，需要开放主机的外网ip与端口
+
+    在conf/broker.conf 中 加入 两行配置
+    namesrvAddr=你的公网IP:9876
+    brokerIP1=你的公网IP
+
+namesrvAddr=47.119.180.152:9876
+brokerIP1=47.119.180.152
+
+
+
+#### 3.1 bin目录下启动nameserve
+
+    切换目录：cd /usr/local/rocketmq/rocketmq-4.6.1/bin
+
+    启动nameserve： nohup sh mqnamesrv &
+    
+    启动是否成功的日志命令：tail -f ~/logs/rocketmqlogs/namesrv.log
+
+![Image text](./images/nameserve.jpg)
+
+#### 3.2 bin目录下启动broker
+
+    切换目录： cd /usr/local/rocketmq/rocketmq-4.6.1/bin
+
+    选择配置文件启动broker：(当前选择第一条)
+        nohup sh mqbroker -n 47.119.180.152:9876 -c /usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf autoCreateTopicEnable=true &   （注：mq集群下自动创建top是有问题的autoCreateTopicEnable=true）
+        或者(自定义日志文件)
+        nohup sh mqbroker -c /usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf >broker.log 2>&1 &
+
+    查看端口启动情况：netstat -ntlp
+
+    查看日志命令：tail -f ~/logs/rocketmqlogs/broker.log
+    或者查看启动状态：jps
+
+![Image text](./images/broker.PNG)
+
+#### 3.3  创建Topic
+
+Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf
+
+    允许自动创建Topic （注：mq集群下自动创建top存在问题，需要单独处理）
     autoCreateTopicEnable=true
 
     broker没有自动创建topic
@@ -128,36 +172,11 @@ Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf
     sh bin/mqadmin updateTopic -c DefaultCluster -n localhost:9876 -t threezto-test -r 12 -w 12
 
 
-或者手动创建：Topic 
+或者手动创建：Topic
 
-    sh ./mqadmin updateTopic -n localhost:9876 -b localhost:10911 -t topicname
+    sh ./mqadmin updateTopic -n 47.119.180.152:9876 -b 47.119.180.152:10911 -t topicname
 
-#### 3.1 bin目录下启动nameserve
-
-    切换目录：cd /usr/local/rocketmq/rocketmq-4.6.1/bin
-
-    启动nameserve： nohup sh mqnamesrv &
-    
-    启动是否成功的日志命令：tail -f ~/logs/rocketmqlogs/namesrv.log
-
-![Image text](./images/nameserve.jpg)
-
-#### 3.2 bin目录下启动broker
-
-    切换目录： cd /usr/local/rocketmq/rocketmq-4.6.1/bin
-
-    选择配置文件启动broker：
-        nohup sh mqbroker -n localhost:9876 autoCreateTopicEnable=true &
-        或者
-        nohup sh mqbroker -c /usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf >broker.log 2>&1 &
-
-    netstat -ntlp
-
-    查看日志命令：tail -f ~/logs/rocketmqlogs/broker.log
-    查看启动状态：jps
-
-
-#### 3.3  防火墙已放行端口9876与8086 ：
+#### 3.4  防火墙已放行端口9876与8086
 
     （1）如我们需要开启XShell连接时需要使用的9876端口与8086端口
     firewall-cmd --zone=public --add-port=9876/tcp --permanent
@@ -212,7 +231,8 @@ git地址：https://github.com/apache/rocketmq-externals/tree/release-rocketmq-c
     logging.config=classpath:logback.xml
     #if this value is empty,use env value rocketmq.config.namesrvAddr  NAMESRV_ADDR | now, you can set it in ops page.default localhost:9876
     #Name Server地址，修改成你自己的服务地址。多个地址用英文分号“;”隔开
-    rocketmq.config.namesrvAddr=localhost:9876
+    #rocketmq.config.namesrvAddr=localhost:9876
+    rocketmq.config.namesrvAddr=47.119.180.152:9876
     #if you use rocketmq version < 3.5.8, rocketmq.config.isVIPChannel should be false.default true
     rocketmq.config.isVIPChannel=
     #rocketmq-console's data path:dashboard/monitor
@@ -262,12 +282,6 @@ git地址：https://github.com/apache/rocketmq-externals/tree/release-rocketmq-c
  
     Rocketmq官网：http://rocketmq.apache.org/
     
-    Rocketmq文档：rocketmq文档地址：http://rocketmq.apache.org/docs/quick-start/
-
-    安装教程：https://blog.csdn.net/darendu/article/details/103539968 
-             https://blog.csdn.net/qq_41463655/article/details/101907665
-             https://blog.csdn.net/so_geili/article/details/90142461
-
-    https://www.jianshu.com/p/5f70e34448ce
+    Rocketmq文档：http://rocketmq.apache.org/docs/quick-start/
 
     安装教程（详细）https://www.freesion.com/article/2834981885/
