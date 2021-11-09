@@ -15,7 +15,9 @@
         进入RocketMQ安装位置，在bin目录下执行
         ./mqadmin {command} {args}
 
-启动与关闭
+外网ip：47.119.180.152 
+
+**启动与关闭**
 
     rocketmq/bin目录下
 
@@ -24,12 +26,14 @@
             查看日志命令：日志命令：tail -f ~/logs/rocketmqlogs/namesrv.log
         nohup sh mqbroker -n 47.119.180.152:9876 -c /usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf autoCreateTopicEnable=true &   （注：mq集群下自动创建top是有问题的autoCreateTopicEnable=true）
             查看日志命令：tail -f ~/logs/rocketmqlogs/broker.log
-        nohup java -jar rocketmq-console-ng-1.0.0.jar --rocketmq.config.namesrvAddr='47.119.180.152:9876' >out.log 2>&1 &
     
     2：关闭命令： 
         关闭namesrv服务：sh mqshutdown namesrv
         关闭broker服务 ：sh mqshutdown broker
 
+**启动rocketmq-console**
+
+    nohup java -jar rocketmq-console-ng-1.0.0.jar --rocketmq.config.namesrvAddr='47.119.180.152:9876' >out.log 2>&1 &
 
 ### 1 Linux安装JDK8
 
@@ -117,10 +121,9 @@ Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf
     namesrvAddr=你的公网IP:9876
     brokerIP1=你的公网IP
 
-namesrvAddr=47.119.180.152:9876
-brokerIP1=47.119.180.152
-
-
+    本人：（阿里云需要配置安全组，防火墙放行10911端口）
+    namesrvAddr=47.119.180.152:9876
+    brokerIP1=47.119.180.152
 
 #### 3.1 bin目录下启动nameserve
 
@@ -176,17 +179,21 @@ Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf
 
     sh ./mqadmin updateTopic -n 47.119.180.152:9876 -b 47.119.180.152:10911 -t topicname
 
-#### 3.4  防火墙已放行端口9876与8086
+#### 3.4  防火墙已放行端口9876与8086与10911
 
     （1）如我们需要开启XShell连接时需要使用的9876端口与8086端口
     firewall-cmd --zone=public --add-port=9876/tcp --permanent
     firewall-cmd --zone=public --add-port=8086/tcp --permanent
+    firewall-cmd --zone=public --add-port=10911/tcp --permanent
     其中--permanent的作用是使设置永久生效，不加的话机器重启之后失效
     （2）重新载入一下防火墙设置，使设置生效
     firewall-cmd --reload
     （3）可通过如下命令查看是否生效
     firewall-cmd --zone=public --query-port=9876/tcp
     firewall-cmd --zone=public --query-port=8086/tcp
+    firewall-cmd --zone=public --query-port=10911/tcp
+
+ 注：阿里云需要配置安全组放行端口。 10911是阿里云需要。
 
 ### 4 rocketmq-console下载、部署
 
@@ -269,11 +276,13 @@ git地址：https://github.com/apache/rocketmq-externals/tree/release-rocketmq-c
 
 执行成功，访问页面：
 
-    http://ip:8086/rocketmq
+    http://47.119.180.152:8086/rocketmq
 
 ### 5 控制台的使用
 
 ![Image text](./images/rocketmq管理界面.png)
+
+![Image text](./images/rocketmq管理界面2.png)
 
 ### 参考
 
@@ -285,3 +294,5 @@ git地址：https://github.com/apache/rocketmq-externals/tree/release-rocketmq-c
     Rocketmq文档：http://rocketmq.apache.org/docs/quick-start/
 
     安装教程（详细）https://www.freesion.com/article/2834981885/
+
+    RocketMQ 阿里云部署 设置brokerIP 及不生效问题：https://blog.csdn.net/svncvs/article/details/88243728
