@@ -12,6 +12,8 @@ rocketmq消费者，负责消费rocketmq中对应的mq消息。有消费者服�
 
 ### 1 Rocketmq 介绍
 
+注： rocketmq不允许一个消费者组同时订阅多个topic或者同时做多件事情，也就是消费者只能订阅一个topic、做一件事情。（consumerGroup只能有一个）
+
 ### 参考
 
 
@@ -23,4 +25,6 @@ rocketmq消费者，负责消费rocketmq中对应的mq消息。有消费者服�
     
     Rocketmq文档：rocketmq文档地址：http://rocketmq.apache.org/docs/quick-start/
 
-    RocketMQ相关问题：https://blog.csdn.net/QGhurt/article/details/114630705
+    RocketMQ相关问题：https://blog.csdn.net/javahongxi/article/details/86160085
+
+    (详细)https://blog.csdn.net/javahongxi/article/details/86160085

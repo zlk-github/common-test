@@ -284,6 +284,8 @@ git地址：https://github.com/apache/rocketmq-externals/tree/release-rocketmq-c
 
 ![Image text](./images/rocketmq管理界面2.png)
 
+详细参考：https://www.pianshen.com/article/17661107472/
+
 ### 参考
 
 

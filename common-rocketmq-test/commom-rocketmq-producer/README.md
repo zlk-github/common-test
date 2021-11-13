@@ -16,15 +16,20 @@ Rocketmq生产者负责把消息推送到Rocketmq供消费者消费。
 
 ### 参考
 
-
     mq比较https://www.jianshu.com/p/0b1d1fe84e70
 
     Rocketmq源码(重点)：https://github.com/apache/rocketmq/tree/master/docs/cn
  
     Rocketmq官网：http://rocketmq.apache.org/
     
-    Rocketmq文档：rocketmq文档地址：http://rocketmq.apache.org/docs/quick-start/
+    Rocketmq文档：http://rocketmq.apache.org/docs/quick-start/
 
     RocketMQ相关问题：https://blog.csdn.net/QGhurt/article/details/114630705
 
     集成到springboot2.0 :https://blog.csdn.net/zxl646801924/article/details/105659481/
+
+    注解方式见：http://sharehoo.cn/blog/leg/article/103
+              https://blog.csdn.net/weixin_43970890/article/details/116157460
+    (详细)https://blog.csdn.net/javahongxi/article/details/86160085
+
+    顺序，重复，消费模式：https://www.cnblogs.com/xuwc/p/9034352.html

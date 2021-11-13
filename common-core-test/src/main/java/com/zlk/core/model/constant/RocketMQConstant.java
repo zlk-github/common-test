@@ -9,12 +9,17 @@ public interface RocketMQConstant {
 
     // 集群模式--（1对1）
     // 主题(一组消息存放在top中，每个服务器可以配置多个TOP)
-    String CLUSTERING_TOPIC = "clustering-topic";
+    String CLUSTERING_TOPIC_1 = "clustering-topic1";
     // 主题(一组消息存放在top中，每个服务器可以配置多个TOP)
-    String CLUSTERING_TOPIC2 = "clustering-topic2";
+    String CLUSTERING_TOPIC_2 = "clustering-topic2";
+    String CLUSTERING_TOPIC_3 = "clustering-topic3";
+    String CLUSTERING_TOPIC_4 = "clustering-topic4";
+    String CLUSTERING_TOPIC_5 = "clustering-topic5";
+    String CLUSTERING_TOPIC_6 = "clustering-topic6";
+
     // 标签(同一主题下区分不同类型的消息)
-    String CLUSTERING_TAG = "clustering-tag";
+    String TAG_1 = "clustering-tag1";
     // 标签(同一主题下区分不同类型的消息)
-    String CLUSTERING_TAG2 = "clustering-tag2";
+    String TAG_2 = "clustering-tag2";
 
 }
