@@ -26,7 +26,7 @@ rocketmq :
         # 发送消息超时时间，默认 3000
         send-message-timeout: 3000
         # 发送消息失败重试次数，默认2
-        retry-times-when-send-async-failed: 2
+        retry-times-when-send-async-failed: 3
 
 
 

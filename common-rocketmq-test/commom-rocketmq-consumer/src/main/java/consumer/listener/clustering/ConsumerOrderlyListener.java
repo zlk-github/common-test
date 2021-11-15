@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-// 消费组rocketmq_group_1001，top为clustering-topic2
+// 消费组rocketmq_group_1004，top为clustering-topic4
 @RocketMQMessageListener(topic = RocketMQConstant.CLUSTERING_TOPIC_4,consumerGroup ="${rocketmq.consumer.group4}", consumeMode = ConsumeMode.ORDERLY)
 public class ConsumerOrderlyListener implements RocketMQListener<String> {
     @Value("${rocketmq.consumer.group4}")

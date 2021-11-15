@@ -81,4 +81,18 @@ public class ProducerControllerTest {
         producerController.syncSendOrderly("订单1003发送短信","1003");
 
     }
+
+    @Test
+    public void testRetrySend(){
+        // 消息重试消息
+     /*   MessageExt messageExt = new MessageExt();
+        messageExt.setBody("订单1001创建".getBytes(StandardCharsets.UTF_8));*/
+        producerController.retrySend("订单1001创建","1001");
+
+      /*  messageExt = new MessageExt();
+        messageExt.setBody("订单1001发送短信".getBytes(StandardCharsets.UTF_8));*/
+        producerController.retrySend("订单1001发送短信","1001");
+
+    }
+
 }

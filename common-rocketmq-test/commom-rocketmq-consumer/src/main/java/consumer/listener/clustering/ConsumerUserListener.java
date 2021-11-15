@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 @Slf4j
 //@Component
-// 消费组rocketmq_group_1001，top为clustering-topic2
+// 消费组rocketmq_group_1002，top为clustering-topic2
 @RocketMQMessageListener(topic = RocketMQConstant.CLUSTERING_TOPIC_2,consumerGroup ="${rocketmq.consumer.group2}")
 public class ConsumerUserListener implements RocketMQListener<UserVO> {
     @Value("${rocketmq.consumer.group2}")

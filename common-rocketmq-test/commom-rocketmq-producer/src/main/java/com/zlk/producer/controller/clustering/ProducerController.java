@@ -151,6 +151,7 @@ public class ProducerController {
     public void sendDelayed(@RequestBody String msg){
         try {
             // 发送延时队列
+            // TODO 待测试完善
             SendResult send = rocketMQTemplate.syncSend(RocketMQConstant.CLUSTERING_TOPIC_3, MessageBuilder.withPayload(msg).build(), 3000, 3);
             log.info("消息发送,msgId:{}",send.getMsgId());
         }catch (Exception ex) {
@@ -176,6 +177,18 @@ public class ProducerController {
             log.info("消息发送,msgId:{}",send.getMsgId());
         }catch (Exception ex) {
             log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",mqProducer.getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_4,msg,ex);
+        }
+    }
+
+
+    @PostMapping("/retry/send")
+    @ApiOperation("失败重试消息")
+    public void retrySend(@RequestBody String message, String hashkey){
+        try {
+            SendResult send = rocketMQTemplate.syncSendOrderly(RocketMQConstant.CLUSTERING_TOPIC_5, message, hashkey);
+            log.info("消息发送,msgId:{}",send.getMsgId());
+        }catch (Exception ex) {
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",mqProducer.getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_5,message,ex);
         }
     }
 
