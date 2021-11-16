@@ -1,5 +1,6 @@
 package com.zlk.producer.controller;
 
+import com.zlk.core.model.constant.RocketMQConstant;
 import com.zlk.core.model.vo.UserVO;
 import com.zlk.producer.controller.clustering.ProducerController;
 import org.junit.Test;
@@ -43,8 +44,9 @@ public class ProducerControllerTest {
 
     @Test
     public void testTagSend(){
-        String msg = "这是一条带tag的消息！";
-        producerController.tagSend(msg);
+        String msg = "这是一条带tag的消息。tag:";
+        producerController.tagSend(msg+RocketMQConstant.TAG_1, RocketMQConstant.TAG_1);
+        producerController.tagSend(msg+RocketMQConstant.TAG_2, RocketMQConstant.TAG_2);
     }
 
     @Test
@@ -92,6 +94,12 @@ public class ProducerControllerTest {
       /*  messageExt = new MessageExt();
         messageExt.setBody("订单1001发送短信".getBytes(StandardCharsets.UTF_8));*/
         producerController.retrySend("订单1001发送短信","1001");
+
+    }
+
+    @Test
+    public void testSendDelayed(){
+        producerController.sendDelayed("这是一条延时消息！！！！");
 
     }
 

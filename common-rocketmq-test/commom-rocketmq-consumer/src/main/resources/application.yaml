@@ -21,12 +21,13 @@ rocketmq :
     name-server: 47.119.180.152:9876
     consumer:
         # 发送同一类消息设置为同一个group
-        group1: "rocketmq_group_1001"
-        group2: "rocketmq_group_1002"
-        group3: "rocketmq_group_1003"
-        group4: "rocketmq_group_1004"
-        group5: "rocketmq_group_1005"
-        group6: "rocketmq_group_1006"
+        group1: "rocketmq_consumer_group_1001"
+        group2: "rocketmq_consumer_group_1002"
+        group3: "rocketmq_consumer_group_1003"
+        group4: "rocketmq_consumer_group_1004"
+        group5: "rocketmq_consumer_group_1005"
+        group6: "rocketmq_consumer_group_1006"
+        group7: "rocketmq_consumer_group_1007"
         # 是否开启自动配置
         #isOnOff: on
         # 发送同一类消息设置为同一个group，保证唯一默认不需要设置，rocketmq会使用ip@pid（pid代表jvm名字）作为唯一标识

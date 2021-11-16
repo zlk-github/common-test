@@ -16,6 +16,7 @@ public interface RocketMQConstant {
     String CLUSTERING_TOPIC_4 = "clustering-topic4";
     String CLUSTERING_TOPIC_5 = "clustering-topic5";
     String CLUSTERING_TOPIC_6 = "clustering-topic6";
+    String CLUSTERING_TOPIC_7 = "clustering-topic7";
 
     // 标签(同一主题下区分不同类型的消息)
     String TAG_1 = "clustering-tag1";

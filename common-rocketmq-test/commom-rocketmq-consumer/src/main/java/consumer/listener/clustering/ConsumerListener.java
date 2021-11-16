@@ -2,9 +2,11 @@ package consumer.listener.clustering;
 
 import com.zlk.core.model.constant.RocketMQConstant;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * 消费者--集群模式（1对1）
@@ -14,7 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
  */
 
 @Slf4j
-//@Component
+@Component
 // 消费组rocketmq_group_1001，top为clustering-topic1
 @RocketMQMessageListener(topic = RocketMQConstant.CLUSTERING_TOPIC_1,consumerGroup ="${rocketmq.consumer.group1}")
 
@@ -30,14 +32,12 @@ consumeMode消息类型（ConsumeMode.ORDERLY为顺序消息）
         consumeMode = ConsumeMode.ORDERLY, reconsumeTimes = -1, consumeMode = ConsumeMode.ORDERLY)
 */
 
-public class ConsumerListener implements RocketMQListener<String> {
+public class ConsumerListener implements RocketMQListener<Message> {
     @Value("${rocketmq.consumer.group1}")
     private String groupName;
 
     @Override
-    public void onMessage(String message) {
+    public void onMessage(Message message) {
         log.info("拿到消费组：{}，主题Top:{}下消息。消息：{}",groupName,RocketMQConstant.CLUSTERING_TOPIC_1,message);
     }
-
-
 }

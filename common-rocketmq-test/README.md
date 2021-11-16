@@ -31,6 +31,12 @@ Spring Boot 如何集成RocketMQ做消息队列
     如何保证消息的顺序
     高可用实现与数据同步
     RocketMQ实现原理
+    
+另外：
+    
+    生产者一条发送rocketmq存在两条数据
+    消费结束数据还存在于rocketmq
+
 
 安装见：[Linux安装RocketMQ教程](https://github.com/zlk-github/common-test/blob/master/common-rocketmq-test/README-INIT.md#Linux安装Rocketmq教程)
 

@@ -35,8 +35,7 @@ public class ConsumerRetryListener implements RocketMQListener<MessageExt>, Rock
         } catch (Exception ex) {
             // 1需要重试,把异常抛出去。最后还失败，消息会留在MQ。
             // TODO 待完善，需要丢到死信队列或者数据库，做人工干预等。
-            // throw ex;
-
+             throw ex;
             //2不需要重试则默认把异常捕获掉，默认该消息已被消费，mq里面会剔除(去掉异常抛出)
             //log.info("不需要重试则默认把异常捕获掉，默认该消息已被消费，mq里面会剔除",ex);
         }
