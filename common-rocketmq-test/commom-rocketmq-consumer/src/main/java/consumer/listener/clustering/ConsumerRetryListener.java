@@ -9,7 +9,6 @@ import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.apache.rocketmq.spring.core.RocketMQPushConsumerLifecycleListener;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 /**
  * 消费者(消费失败重试)--集群模式（1对1）
@@ -19,7 +18,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Slf4j
-@Component
+//@Component
 // 消费组rocketmq_group_1005，top为clustering-topic5
 @RocketMQMessageListener(topic = RocketMQConstant.CLUSTERING_TOPIC_5,consumerGroup ="${rocketmq.consumer.group5}",consumeMode = ConsumeMode.ORDERLY)
 public class ConsumerRetryListener implements RocketMQListener<MessageExt>, RocketMQPushConsumerLifecycleListener {

@@ -6,7 +6,6 @@ import org.apache.rocketmq.common.message.MessageExt;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 /**
  * 消费者(延时消息)--集群模式（1对1）
@@ -16,7 +15,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Slf4j
-@Component
+//@Component
 // 消费组rocketmq_group_1003，top为clustering-topic3
 @RocketMQMessageListener(topic = RocketMQConstant.CLUSTERING_TOPIC_3,consumerGroup ="${rocketmq.consumer.group3}")
 

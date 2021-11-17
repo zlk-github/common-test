@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Slf4j
-@Component
+//@Component
 // 消费组rocketmq_group_1001，top为clustering-topic1
 @RocketMQMessageListener(topic = RocketMQConstant.CLUSTERING_TOPIC_1,consumerGroup ="${rocketmq.consumer.group1}")
 

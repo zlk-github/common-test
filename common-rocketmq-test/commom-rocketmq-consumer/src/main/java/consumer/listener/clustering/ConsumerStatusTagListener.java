@@ -4,6 +4,9 @@ import com.zlk.core.model.constant.RocketMQConstant;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
+import org.apache.rocketmq.client.consumer.listener.ConsumeOrderlyContext;
+import org.apache.rocketmq.client.consumer.listener.ConsumeOrderlyStatus;
+import org.apache.rocketmq.client.consumer.listener.MessageListenerOrderly;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
@@ -11,8 +14,10 @@ import org.apache.rocketmq.spring.core.RocketMQPushConsumerLifecycleListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
- * 消费者(tag过滤消息)--集群模式（1对1）
+ * 消费者(tag过滤消息--返回确认状态)--集群模式（1对1）
  *     注：集群消费（Clustering）：相同消费组下的消费者都会平均分摊消息。（1对1）
  * @author likuan.zhou
  * @date 2021/11/1/001 8:33
@@ -23,7 +28,7 @@ import org.springframework.stereotype.Component;
 // 消费组rocketmq_group_1007，top为clustering-topic7
 @RocketMQMessageListener(topic = RocketMQConstant.CLUSTERING_TOPIC_7,consumerGroup ="${rocketmq.consumer.group7}")
 
-public class ConsumerTagListener implements RocketMQListener<MessageExt> , RocketMQPushConsumerLifecycleListener {
+public class ConsumerStatusTagListener implements RocketMQListener<MessageExt> , RocketMQPushConsumerLifecycleListener, MessageListenerOrderly {
     @Value("${rocketmq.consumer.group1}")
     private String groupName;
 
@@ -44,4 +49,12 @@ public class ConsumerTagListener implements RocketMQListener<MessageExt> , Rocke
         defaultMQPushConsumer.setPullBatchSize(16);
     }
 
+    @Override
+    public ConsumeOrderlyStatus consumeMessage(List<MessageExt> msgs, ConsumeOrderlyContext consumeOrderlyContext) {
+        for (MessageExt messageExt : msgs) {
+            log.info("consumeMessage-----tag过滤消息。拿到消费组：{}，主题Top:{}下消息,消息：{},tag:{}",groupName,RocketMQConstant.CLUSTERING_TOPIC_7,msgs,messageExt.getTags());
+        }
+        // https://blog.csdn.net/XinhuaShuDiao/article/details/106014635
+        return ConsumeOrderlyStatus.SUCCESS;
+    }
 }
