@@ -1,4 +1,4 @@
-package com.zlk.producer.controller.clustering;
+package com.zlk.producer.controller;
 
 import com.zlk.core.model.constant.RocketMQConstant;
 import com.zlk.core.model.vo.UserVO;
@@ -15,24 +15,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 生产者--集群模式（1对1）
- *     注：集群消费（Clustering）：相同消费组下的消费者都会平均分摊消息。（1对1）
+ * 生产者--生产消息，发送到MQ
  * @author likuan.zhou
  * @date 2021/11/1/001 8:33
  */
 @RestController
 @RequestMapping("producer")
 @Slf4j
-@Api(tags = "生产者--集群模式（1对1）")
+@Api(tags = "生产者")
 public class ProducerController {
-    // 同一台机器的同一条消息，MsgId是一样的。
+    // 同一台机器的同一条消息，MsgId是不一定一样，不要用来做业务。需要的话自己设置key。
     // 以下的log.info不要在生产环境使用，否则会生成大量日志
 
+    // 当前未配置
     @Autowired
     private DefaultMQProducer mqProducer;
 
@@ -54,7 +55,7 @@ public class ProducerController {
             // 仅仅只是为了看输出，线上不要打该日志，否认会导致效率问题与占用大量服务器存储空间。
             log.info("消息发送成功。msgId:{}",send.getMsgId());
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},Tag:{},消息:{}",mqProducer.getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_1,RocketMQConstant.TAG_1,msg,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},Tag:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_1,RocketMQConstant.TAG_1,msg,ex);
         }
     }
 
@@ -87,7 +88,7 @@ public class ProducerController {
             // 等待5s(任务跑完，或者未跑完等待5S)
             countDownLatch.await(5, TimeUnit.SECONDS);
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",mqProducer.getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_1,msg,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_1,msg,ex);
         }
     }
 
@@ -101,7 +102,7 @@ public class ProducerController {
             rocketMQTemplate.sendOneWay(RocketMQConstant.CLUSTERING_TOPIC_1,msg);
             log.info("消息发送");
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",mqProducer.getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_1,msg,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_1,msg,ex);
         }
     }
 
@@ -129,12 +130,10 @@ public class ProducerController {
             // 好处，topic是有限的，但是topic下可以使用tag再分组,且可以支持简单的筛选。
             // topic ,tag。
             rocketMQTemplate.convertAndSend(RocketMQConstant.CLUSTERING_TOPIC_7+":"+tag,msg);
-
             // 发一条不带tag用来测试
-            rocketMQTemplate.convertAndSend(RocketMQConstant.CLUSTERING_TOPIC_7,msg+"不带tag");
-            log.info("消息发送");
+            //rocketMQTemplate.convertAndSend(RocketMQConstant.CLUSTERING_TOPIC_7,msg+"不带tag");
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},Tag:{},消息:{}",mqProducer.getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_7,tag,msg,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},Tag:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_7,tag,msg,ex);
         }
     }
 
@@ -147,7 +146,7 @@ public class ProducerController {
             SendResult send = rocketMQTemplate.syncSend(RocketMQConstant.CLUSTERING_TOPIC_2, userVO);
             log.info("消息发送,msgId:{}",send.getMsgId());
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",mqProducer.getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_2,userVO,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_2,userVO,ex);
         }
     }
 
@@ -157,14 +156,14 @@ public class ProducerController {
     public void sendDelayed(@RequestBody String msg){
         try {
             // 发送延时队列
-            //延时消息的使用场景
-            //比如电商里，提交了一个订单就可以发送一个延时消息，1h后去检查这个订单的状态，如果还是未付款就取消订单释放库存。
+            // 延时消息的使用场景
+            // 比如电商里，提交了一个订单就可以发送一个延时消息，1h后去检查这个订单的状态，如果还是未付款就取消订单释放库存。
             // 设置延时等级3,这个消息将在10s之后发送(现在只支持固定的几个时间,详看delayTimeLevel)
             //private String messageDelayLevel = "1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h";
             SendResult send = rocketMQTemplate.syncSend(RocketMQConstant.CLUSTERING_TOPIC_3, MessageBuilder.withPayload(msg).build(), 3000, 3);
             log.info("消息发送,msgId:{}",send.getMsgId());
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",mqProducer.getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_3,msg,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_3,msg,ex);
         }
     }
 
@@ -185,7 +184,7 @@ public class ProducerController {
             SendResult send = rocketMQTemplate.syncSendOrderly(RocketMQConstant.CLUSTERING_TOPIC_4, msg, hashkey);
             log.info("消息发送,msgId:{}",send.getMsgId());
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",mqProducer.getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_4,msg,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_4,msg,ex);
         }
     }
 
@@ -197,7 +196,7 @@ public class ProducerController {
             SendResult send = rocketMQTemplate.syncSendOrderly(RocketMQConstant.CLUSTERING_TOPIC_5, message, hashkey);
             log.info("消息发送,msgId:{}",send.getMsgId());
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",mqProducer.getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_5,message,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_5,message,ex);
         }
     }
 
@@ -205,12 +204,28 @@ public class ProducerController {
     @ApiOperation("批量消息")
     public void retrySend(@RequestBody List<String> message){
         try {
-            // 批量消息,需要不大于4M（消息列表分割）。该处由于未配置，所以未做测试，只做记录
+            // 批量消息,需要不大于4M（消息列表分割）。
+            // 该处由于未配置，所以未做测试，只做记录(不能测试)
             ArrayList<Message>  listItem = new ArrayList<>();
             SendResult send = mqProducer.send(listItem);
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",mqProducer.getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_5,message,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_1,message,ex);
         }
     }
+
+    @PostMapping("/transaction/send")
+    @ApiOperation("事务消息")
+    public void transactionSend(@RequestBody String msg){
+        try {
+            //  事务消息：RocketMQ采用了2PC的思想来实现了提交事务消息，同时增加一个补偿逻辑来处理二阶段超时或者失败的消息。（不支持延时消息和批量消息）
+            Message message = new Message(RocketMQConstant.CLUSTERING_TOPIC_9,msg.getBytes(StandardCharsets.UTF_8));
+            for (int i = 0; i < 100; i++) {
+                SendResult send = rocketMQTemplate.sendMessageInTransaction(RocketMQConstant.CLUSTERING_TOPIC_9,MessageBuilder.withPayload(msg+":"+i).build(),i);
+            }
+        }catch (Exception ex) {
+            log.error("消息发送失败，MQ主机信息：{}，Top:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_9,ex);
+        }
+    }
+
 
 }

@@ -13,6 +13,7 @@ Spring Boot 如何集成RocketMQ做消息队列
 
 1.1 MQ 比较（优劣）
 
+
 1.2 RocketMQ介绍与基本概念
 
 1.3 RocketMQ 常见问题
@@ -82,3 +83,7 @@ Spring Boot 如何集成RocketMQ做消息队列
     RocketMQ文档：rocketmq文档地址：http://rocketmq.apache.org/docs/quick-start/
 
     RocketMQ相关问题：https://blog.csdn.net/QGhurt/article/details/114630705
+
+    参考博客： https://www.cnblogs.com/xuwc/p/9034352.html
+
+    面试题： https://blog.csdn.net/xiaotai1234/article/details/119117747

@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
 @Component
 // 消费组rocketmq_group_1007，top为clustering-topic7
 @RocketMQMessageListener(topic = RocketMQConstant.CLUSTERING_TOPIC_7,consumerGroup ="${rocketmq.consumer.group7}")
-
 public class ConsumerTagListener implements RocketMQListener<MessageExt> , RocketMQPushConsumerLifecycleListener {
     @Value("${rocketmq.consumer.group1}")
     private String groupName;

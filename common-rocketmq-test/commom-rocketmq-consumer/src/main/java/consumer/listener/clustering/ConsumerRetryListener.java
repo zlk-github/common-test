@@ -9,6 +9,7 @@ import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.apache.rocketmq.spring.core.RocketMQPushConsumerLifecycleListener;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * 消费者(消费失败重试)--集群模式（1对1）
@@ -18,7 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
  */
 
 @Slf4j
-//@Component
+@Component
 // 消费组rocketmq_group_1005，top为clustering-topic5
 @RocketMQMessageListener(topic = RocketMQConstant.CLUSTERING_TOPIC_5,consumerGroup ="${rocketmq.consumer.group5}",consumeMode = ConsumeMode.ORDERLY)
 public class ConsumerRetryListener implements RocketMQListener<MessageExt>, RocketMQPushConsumerLifecycleListener {
@@ -31,7 +32,9 @@ public class ConsumerRetryListener implements RocketMQListener<MessageExt>, Rock
             log.info("自定义消息体。拿到消费组：{}，主题Top:{}下消息。消息：{}",groupName,RocketMQConstant.CLUSTERING_TOPIC_5,messageExt.getBody());
             int s = 1 / 0;
             log.info("消息重试！！！！！！");
-        } catch (Exception ex) {
+        //} catch (Exception ex) {
+        } catch (Throwable ex) {
+            // 注：该处不要使用Exception，否则error会导致没法重试。error不在Exception中。或者直接不捕获
             // 1需要重试,把异常抛出去。最后还失败，消息会留在MQ。
             // TODO 待完善，需要丢到死信队列或者数据库，做人工干预等。
              throw ex;

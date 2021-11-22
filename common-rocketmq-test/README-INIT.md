@@ -5,8 +5,8 @@
     安装JDK8与Maven: RocketMQ java编写，需要java环境
         官网下载网页链接：https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 
-    Rocketmq版本: 5.0.14
-        官网下载网页链接：https://redis.io/download
+    Rocketmq版本: 4.9.1
+        官网下载网页链接：http://rocketmq.apache.org/dowloading/releases/
     
     Rocketmq开源项目(集群监控)：incubator-rocketmq-externals
         参考：https://www.jianshu.com/p/63f4062b661d
@@ -24,7 +24,7 @@
     1：启动命令：
         nohup sh mqnamesrv &
             查看日志命令：日志命令：tail -f ~/logs/rocketmqlogs/namesrv.log
-        nohup sh mqbroker -n 47.119.180.152:9876 -c /usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf autoCreateTopicEnable=true &   （注：mq集群下自动创建top是有问题的autoCreateTopicEnable=true）
+        nohup sh mqbroker -n 47.119.180.152:9876 -c /usr/local/rocketmq/rocketmq-4.9.1/conf/broker.conf autoCreateTopicEnable=true &   （注：mq集群下自动创建top是有问题的autoCreateTopicEnable=true）
             查看日志命令：tail -f ~/logs/rocketmqlogs/broker.log
     
     2：关闭命令： 
@@ -71,7 +71,7 @@ maven 安装省略，我编译打包使用的windows本地环境。
 
 RocketMQ资源获取
 
-    rocketmq-all-4.6.1-bin-release
+    rocketmq-all-4.9.1-bin-release
     链接：https://pan.baidu.com/s/1yb4mpNVxU7qABBgRk-MZmw 
     提取码：k3z0
 
@@ -79,7 +79,7 @@ RocketMQ资源获取
 
 http://rocketmq.apache.org/dowloading/releases/
 
-![Image text](./images/rocketmq下载地址.png)
+![Image text](./images/roeketmq4.9下载.png)
 
 
 #### 2.2 Xshell上传zip并解压
@@ -92,11 +92,11 @@ http://rocketmq.apache.org/dowloading/releases/
     
     Xshell上传：rz 
 
-    解压zip: unzip rocketmq-all-4.4.0-bin-release.zip
+    解压zip: unzip rocketmq-all-4.9.1-bin-release.zip
 
-    更改解压目录名称： mv rocketmq-all-4.6.1-bin-release rocketmq-4.6.1
+    更改解压目录名称： mv rocketmq-all-4.9.1-bin-release rocketmq-4.9.1
 
-    cd /usr/local/rocketmq/rocketmq-4.6.1/bin
+    cd /usr/local/rocketmq/rocketmq-4.9.1/bin
 
     启动参数:虚拟机内存不够，可能启动失败，可以更改内存。（服务器上按需要改）
     vi runserver.sh
@@ -113,7 +113,7 @@ http://rocketmq.apache.org/dowloading/releases/
 
 ### 3 Rocketmq启动
 
-Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf
+Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.9.1/conf/broker.conf
 
 需要外网能访问，需要开放主机的外网ip与端口
 
@@ -127,7 +127,7 @@ Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf
 
 #### 3.1 bin目录下启动nameserve
 
-    切换目录：cd /usr/local/rocketmq/rocketmq-4.6.1/bin
+    切换目录：cd /usr/local/rocketmq/rocketmq-4.9.1/bin
 
     启动nameserve： nohup sh mqnamesrv &
     
@@ -137,12 +137,12 @@ Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf
 
 #### 3.2 bin目录下启动broker
 
-    切换目录： cd /usr/local/rocketmq/rocketmq-4.6.1/bin
+    切换目录： cd /usr/local/rocketmq/rocketmq-4.9.1/bin
 
     选择配置文件启动broker：(当前选择第一条)
-        nohup sh mqbroker -n 47.119.180.152:9876 -c /usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf autoCreateTopicEnable=true &   （注：mq集群下自动创建top是有问题的autoCreateTopicEnable=true）
+        nohup sh mqbroker -n 47.119.180.152:9876 -c /usr/local/rocketmq/rocketmq-4.9.1/conf/broker.conf autoCreateTopicEnable=true &   （注：mq集群下自动创建top是有问题的autoCreateTopicEnable=true）
         或者(自定义日志文件)
-        nohup sh mqbroker -c /usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf >broker.log 2>&1 &
+        nohup sh mqbroker -c /usr/local/rocketmq/rocketmq-4.9.1/conf/broker.conf >broker.log 2>&1 &
 
     查看端口启动情况：netstat -ntlp
 
@@ -153,7 +153,7 @@ Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf
 
 #### 3.3  创建Topic
 
-Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.6.1/conf/broker.conf
+Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.9.1/conf/broker.conf
 
     允许自动创建Topic （注：mq集群下自动创建top存在问题，需要单独处理）
     autoCreateTopicEnable=true
@@ -269,7 +269,7 @@ git地址：https://github.com/apache/rocketmq-externals/tree/release-rocketmq-c
     
     注释：
         #如果配置文件没有填写Name Server的话，可以在启动项目时指定namesrvAddr
-        $ nohup java -jar rocketmq-console-ng-1.0.0.jar --rocketmq.config.namesrvAddr='ip:9876' >out.log 2>&1 &
+        nohup java -jar rocketmq-console-ng-1.0.0.jar --rocketmq.config.namesrvAddr='47.119.180.152:9876' >out.log 2>&1 &
         
         #因为本文在打包时配置了namesrvAddr，故而执行如下命令
         $ nohup java -jar rocketmq-console-ng-1.0.0.jar >out.log 2>&1 &

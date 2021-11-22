@@ -44,11 +44,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
-
         <!-- common-core-test-->
         <dependency>
             <groupId>org.zlk</groupId>
@@ -65,11 +60,9 @@
         <!--<dependency>
             <groupId>org.apache.rocketmq</groupId>
             <artifactId>rocketmq-client</artifactId>
-            <version>4.7.0</version>
+            <version>4.9.1</version>
         </dependency>-->
         <!-- common包集合end -->
-
-
-
     </dependencies>
+
 </project>

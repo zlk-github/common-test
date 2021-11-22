@@ -2,7 +2,6 @@ package com.zlk.producer.controller;
 
 import com.zlk.core.model.constant.RocketMQConstant;
 import com.zlk.core.model.vo.UserVO;
-import com.zlk.producer.controller.clustering.ProducerController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,12 +86,8 @@ public class ProducerControllerTest {
     @Test
     public void testRetrySend(){
         // 消息重试消息
-     /*   MessageExt messageExt = new MessageExt();
-        messageExt.setBody("订单1001创建".getBytes(StandardCharsets.UTF_8));*/
         producerController.retrySend("订单1001创建","1001");
 
-      /*  messageExt = new MessageExt();
-        messageExt.setBody("订单1001发送短信".getBytes(StandardCharsets.UTF_8));*/
         producerController.retrySend("订单1001发送短信","1001");
 
     }

@@ -1,6 +1,6 @@
 package com.zlk.producer.controller;
 
-import com.zlk.producer.controller.clustering.ProducerController;
+import consumer.controller.clustering.ProducerController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +22,8 @@ public class ProducerControllerTest {
     private ProducerController producerController;
 
     @Test
-    public void testSend(){
-        String msg = "这是一条普通消息！";
+    public void testSyncSend(){
+        String msg = "这是一条同步消息！";
         producerController.send(msg);
     }
-
 }
