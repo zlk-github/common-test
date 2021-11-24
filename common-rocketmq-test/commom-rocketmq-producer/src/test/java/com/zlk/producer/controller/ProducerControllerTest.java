@@ -95,7 +95,11 @@ public class ProducerControllerTest {
     @Test
     public void testSendDelayed(){
         producerController.sendDelayed("这是一条延时消息！！！！");
-
     }
 
+    @Test
+    public void testTransactionSend(){
+        producerController.transactionSend("这是一条事务消息！！！！");
+
+    }
 }

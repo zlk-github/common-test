@@ -2,14 +2,16 @@ package com.zlk.producer.controller;
 
 import com.zlk.core.model.constant.RocketMQConstant;
 import com.zlk.core.model.vo.UserVO;
+import com.zlk.producer.config.ExtRocketMQTemplate;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.SendCallback;
 import org.apache.rocketmq.client.producer.SendResult;
-import org.apache.rocketmq.common.message.Message;
+import org.apache.rocketmq.client.producer.TransactionSendResult;
 import org.apache.rocketmq.common.CountDownLatch2;
+import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.support.MessageBuilder;
@@ -30,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Api(tags = "生产者")
 public class ProducerController {
+    // swagger : http://localhost:8031/swagger-ui.html
     // 同一台机器的同一条消息，MsgId是不一定一样，不要用来做业务。需要的话自己设置key。
     // 以下的log.info不要在生产环境使用，否则会生成大量日志
 
@@ -40,6 +43,10 @@ public class ProducerController {
     // 使用下面这个模板即可
     @Autowired
     private RocketMQTemplate rocketMQTemplate;
+
+    // 用于测试事务消息
+    @Autowired
+    private ExtRocketMQTemplate extRocketMQTemplate;
 
     @PostMapping("/sync/send")
     @ApiOperation("发送同步消息，需要等待Broker的响应")
@@ -219,11 +226,13 @@ public class ProducerController {
         try {
             //  事务消息：RocketMQ采用了2PC的思想来实现了提交事务消息，同时增加一个补偿逻辑来处理二阶段超时或者失败的消息。（不支持延时消息和批量消息）
             Message message = new Message(RocketMQConstant.CLUSTERING_TOPIC_9,msg.getBytes(StandardCharsets.UTF_8));
-            for (int i = 0; i < 100; i++) {
-                SendResult send = rocketMQTemplate.sendMessageInTransaction(RocketMQConstant.CLUSTERING_TOPIC_9,MessageBuilder.withPayload(msg+":"+i).build(),i);
+            for (int i = 0; i < 5; i++) {
+                //destination为消息发送的topic，message为消息体，arg为传递给本地函数参数
+                TransactionSendResult transaction = extRocketMQTemplate.sendMessageInTransaction(RocketMQConstant.CLUSTERING_TOPIC_9, MessageBuilder.withPayload(msg).build(), i);
+                log.info("发送状态：{}",transaction.getLocalTransactionState());
             }
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_9,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{}",extRocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_9,ex);
         }
     }
 

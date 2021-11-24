@@ -239,12 +239,18 @@ rocketmq :
 
 ##### 3.1.5 事务消息
 
+    RocketMQ 事务消息设计则主要是为了解决 Producer 端的消息发送与本地事务执行的原子性问题，RocketMQ 的设计中 broker 与 producer 端的双向通信能力，使得 broker 天生可以作为一个事务协调者存在；
+    而 RocketMQ 本身提供的存储机制为事务消息提供了持久化能力；RocketMQ 的高可用机制以及可靠消息设计则为事务消息在系统发生异常时依然能够保证达成事务的最终一致性(补偿机制)。
+    
+    在RocketMQ 4.3后实现了完整的事务消息，实际上其实是对本地消息表的一个封装，将本地消息表移动到了MQ内部，解决 Producer 端的消息发送与本地事务执行的原子性问题。
+    
     事务消息：RocketMQ采用了2PC的思想来实现了提交事务消息，同时增加一个补偿逻辑来处理二阶段超时或者失败的消息。（不支持延时消息和批量消息）
 
     事务消息共有三种状态，提交状态、回滚状态、中间状态：
         TransactionStatus.CommitTransaction: 提交事务，它允许消费者消费此消息。
         TransactionStatus.RollbackTransaction: 回滚事务，它代表该消息将被删除，不允许被消费。
-        TransactionStatus.Unknown: 中间状态，它代表需要检查消息队列来确定状态。
+        TransactionStatus.Unknown: 中间状态，它代表需要检查消息队列来确定状态。未知，这个状态有点意思，如果返回这个状态，
+                                    这个消息既不提交，也不回滚，还是保持prepared状态，而最终决定这个消息命运的，是checkLocalTransaction这个方法。
 
 ##### 3.1.6 批量消息
 
@@ -253,9 +259,6 @@ rocketmq :
 #### 3.2 广播消费（简单介绍）
 
 广播消费模式下，相同Consumer Group的每个Consumer实例都接收全量的消息。
-
-
-
 
 
 ### 参考
@@ -273,3 +276,7 @@ rocketmq :
     参考博客： https://www.cnblogs.com/xuwc/p/9034352.html
 
     面试题： https://blog.csdn.net/xiaotai1234/article/details/119117747
+
+    事务消息问题：https://github.com/apache/rocketmq-spring/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98
+
+    事务消息参考：https://xie.infoq.cn/article/414b50d4d118738c150010260
