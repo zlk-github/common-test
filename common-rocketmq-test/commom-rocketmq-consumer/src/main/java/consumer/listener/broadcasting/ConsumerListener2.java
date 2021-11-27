@@ -1,4 +1,4 @@
-package consumer.listener.clustering;
+package consumer.listener.broadcasting;
 
 import com.zlk.core.model.constant.RocketMQConstant;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +9,7 @@ import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
- * 消费者--集群模式（1对1）
+ * 消费者--广播模式（1对多）
  *     注：集群消费（Clustering）：相同消费组下的消费者都会平均分摊消息。（1对1）
  * @author likuan.zhou
  * @date 2021/11/1/001 8:33
@@ -33,7 +33,7 @@ messageModel消费模式（默认集群消费）
         consumeMode = ConsumeMode.ORDERLY, reconsumeTimes = -1, consumeMode = ConsumeMode.ORDERLY,messageModel = MessageModel.CLUSTERING)
 */
 
-public class ConsumerListener implements RocketMQListener<Message> {
+public class ConsumerListener2 implements RocketMQListener<Message> {
     @Value("${rocketmq.consumer.group1}")
     private String groupName;
 

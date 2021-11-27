@@ -7,7 +7,6 @@ import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.Message;
-import org.springframework.stereotype.Component;
 
 /**
  * 消费者(事务消息)--集群模式（1对1）
@@ -17,7 +16,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Slf4j
-@Component
+//@Component
 @RocketMQMessageListener(topic = RocketMQConstant.CLUSTERING_TOPIC_9,consumerGroup ="${rocketmq.consumer.transaction_group9}")
 public class ConsumerTransactionListener implements RocketMQListener<Message> {
     @Value("${rocketmq.consumer.transaction_group9}")

@@ -45,12 +45,54 @@ RocketMQ默认采用长轮询的拉模式，单机可以支持千万级别数据
     消息中转角色，负责存储与转发消息。
     代理服务器也存储消息相关的元数据，包括消费者组、消费进度偏移和主题和队列消息等。
 
+    Broker部署相对复杂，Broker分为Master与Slave，一个Master可以对应多个Slave，但是一个Slave只能对应一个Master，
+    Master与Slave 的对应关系通过指定相同的BrokerName，不同的BrokerId 来定义，BrokerId为0表示Master，非0表示Slave。Master也可以部署多个。
+    每个Broker与NameServer集群中的所有节点建立长连接，定时注册Topic信息到所有NameServer。 
+    注意：当前RocketMQ版本在部署架构上支持一Master多Slave，但只有BrokerId=1的从服务器才会参与消息的读负载。
+
 1.2.6 名字服务（Name Server）
 
     名称服务充当路由消息的提供者。生产者或消费者能够通过名字服务查找各主题相应的Broker IP列表。
     多个Namesrv实例组成集群，但相互独立，没有信息交换。
 
+1.2.7 拉取式消费（Pull Consumer）
+
+    一种消费类型，消费者主动从Broker服务器拉取消息进行消费。批量获取消息。
+
+1.2.8 推动式消费（Push Consumer）
+
+    一种消费类型，Broker服务器收到数据后会主动推送给消费端，该消费模式一般实时性较高。
+
+1.2.9 生产者组（Producer Group）
+
+    同一类生产者的集合，如果发送事务消息后原生产者崩溃，Broker服务器可以联系同一类生产者组的其他生产者做提交与回溯消费（事务提交与回滚）。
+
+1.2.10 消费者组（Consumer Group）
+
+    同一类消费者的集合，用于负载均衡与容错。消费者必须订阅相同的topic。消费模式：集群消费与广播消费。
+
+1.2.11 集群消费（Clustering）|| 广播消费（Broadcasting）
+
+    集群消费模式下,相同Consumer Group的每个Consumer实例平均分摊消息。不同的消费组也是全量消息。
+    广播消费模式下，相同Consumer Group的每个Consumer实例都接收全量的消息。（少见）
+
+1.2.12 普通顺序消息（Normal Ordered Message）|| 严格顺序消息（Strictly Ordered Message）
+
+    普通顺序消费模式下，消费者通过同一个消息队列（ Topic 分区，称作 Message Queue） 收到的消息是有顺序的，不同消息队列收到的消息则可能是无顺序的。
+    严格顺序消息模式下，消费者收到的所有消息均是有顺序的。
+
+1.2.13 消息（Message）
+
+    信息的载体，生产与消费的最小单位，消息必须属于一个Topic。
+    RocketMQ中每个消息拥有唯一的Message ID（存在问题，不要作为业务去重），且可以携带具有业务标识的Key（顺序消息与幂等使用）。
+    系统提供了通过Message ID和Key查询消息的功能。
+
+1.2.14 标签（Tag）
+
+    topic的一个补充，一个topic下可以有不同类型的消息。可以根据业务设置不同类型的标签，消费者可以根据标签实现不同的消费逻辑拓展。
+
 #### 1.3 RocketMQ实现原理
+
 
 
 #### 1.4 Rocketmq 常见问题

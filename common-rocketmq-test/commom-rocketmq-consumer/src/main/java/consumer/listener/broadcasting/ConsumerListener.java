@@ -1,4 +1,4 @@
-package consumer.listener.clustering;
+package consumer.listener.broadcasting;
 
 import com.zlk.core.model.constant.RocketMQConstant;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +9,7 @@ import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
- * 消费者--集群模式（1对1）
+ * 消费者--广播模式（1对多）
  *     注：集群消费（Clustering）：相同消费组下的消费者都会平均分摊消息。（1对1）
  * @author likuan.zhou
  * @date 2021/11/1/001 8:33

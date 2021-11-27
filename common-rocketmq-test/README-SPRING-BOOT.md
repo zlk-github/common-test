@@ -18,6 +18,8 @@ Rocketmq版本: 4.9.1
     每个主题的消息可以分片存放到不同的代理服务器上。Message Queue 用于存储消息的物理地址，每个主题中的消息中的信息存储于多个Message Queue中。
     消费者组(ConsumerGroup) 由多个消费者实例构成。
 
+![Image text](./images/RocketMq架构图.png)
+
 RocketMQ消费主要分为集群消费模式与广播消费模式。
 
     集群消费模式下,相同Consumer Group的每个Consumer实例平均分摊消息。
@@ -32,7 +34,7 @@ RocketMQ消费主要分为集群消费模式与广播消费模式。
     事务消息：RocketMQ采用了2PC的思想来实现了提交事务消息，同时增加一个补偿逻辑来处理二阶段超时或者失败的消息。（不支持延时消息和批量消息）
     批量消息：主要是为了减少网络开销，批量提交。有长度限制。默认小于4MB。
 
-每个服务中不能存在多个相同的Consumer Group。但是可以多个Consumer Group消费一个Topic(一般不要这样做，除非是广播消费场景)。
+每个服务中不能存在多个相同的Consumer Group。但是可以多个Consumer Group消费一个Topic(一般不要这样做，除非是广播消费场景)。--待测试
 
 ### 2 Spring Boot 2.0集成 RocketMQ
 
