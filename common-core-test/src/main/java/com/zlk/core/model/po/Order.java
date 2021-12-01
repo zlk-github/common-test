@@ -1,5 +1,6 @@
-package com.zlk.core.model.dto;
+package com.zlk.core.model.po;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.zlk.core.model.enums.SubmitStatusEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -14,8 +15,9 @@ import java.io.Serializable;
  * @date 2021/11/23/023 19:30
  */
 @Data
-@ApiModel(value="订单DTO", description="订单DTO")
-public class OrderDTO implements Serializable {
+@TableName("tt_order")
+@ApiModel(value="订单", description="订单")
+public class Order implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @ApiModelProperty(value = "主键")

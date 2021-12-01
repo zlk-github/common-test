@@ -2,9 +2,7 @@ package com.zlk.producer.controller;
 
 
 import com.zlk.producer.service.OrderService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.rocketmq.spring.annotation.RocketMQTransactionListener;
 import org.apache.rocketmq.spring.core.RocketMQLocalTransactionListener;
 import org.apache.rocketmq.spring.core.RocketMQLocalTransactionState;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +23,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 // 默认监控rocketMQTemplate.sendMessageInTransaction
 //@RocketMQTransactionListener
-@RocketMQTransactionListener(rocketMQTemplateBeanName = "extRocketMQTemplate2")
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+//@RocketMQTransactionListener(rocketMQTemplateBeanName = "extRocketMQTemplate2")
 public class ProducerTransactionListener2 implements RocketMQLocalTransactionListener{
     private AtomicInteger transactionIndex = new AtomicInteger(0);
     // 该记录
     private ConcurrentHashMap<Integer, Boolean> localTransMap=new ConcurrentHashMap<>();
+    @Autowired
     private OrderService orderService;
 
 

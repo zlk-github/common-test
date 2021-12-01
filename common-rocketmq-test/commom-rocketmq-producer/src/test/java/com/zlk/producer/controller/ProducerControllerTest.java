@@ -8,9 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
+
 /**
- * 生产者测试用例--集群模式（1对1）
- *     注：集群消费（Clustering）：相同消费组下的消费者都会平均分摊消息。（1对1）
+ * 生产者测试用例
  * @author likuan.zhou
  * @date 2021/11/1/001 8:33
  */
@@ -19,6 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 public class ProducerControllerTest {
+    // 注事务消息需要启动服务配合测试
     @Autowired
     private ProducerController producerController;
 
@@ -96,6 +98,19 @@ public class ProducerControllerTest {
     public void testSendDelayed(){
         producerController.sendDelayed("这是一条延时消息！！！！");
     }
+
+    @Test
+    public void testListSend(){
+        // 批量消息,需要不大于4M（消息列表分割,超过需要切割）。
+        ArrayList<String> listItem = new ArrayList<>();
+        for (int i = 0; i < 1000; i++) {
+            listItem.add("这是一条延时消息，序号"+i);
+        }
+
+        producerController.listSend(listItem);
+    }
+
+
 
     @Test
     public void testTransactionSend(){

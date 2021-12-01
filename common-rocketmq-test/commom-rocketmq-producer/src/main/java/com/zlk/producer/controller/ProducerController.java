@@ -18,7 +18,6 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -200,6 +199,7 @@ public class ProducerController {
     @ApiOperation("失败重试消息")
     public void retrySend(@RequestBody String message, String hashkey){
         try {
+            // 该处测试消费失败重试
             SendResult send = rocketMQTemplate.syncSendOrderly(RocketMQConstant.CLUSTERING_TOPIC_5, message, hashkey);
             log.info("消息发送,msgId:{}",send.getMsgId());
         }catch (Exception ex) {
@@ -209,12 +209,20 @@ public class ProducerController {
 
     @PostMapping("/list/send")
     @ApiOperation("批量消息")
-    public void retrySend(@RequestBody List<String> message){
+    public void listSend(@RequestBody List<String> message){
         try {
-            // 批量消息,需要不大于4M（消息列表分割）。
-            // 该处由于未配置，所以未做测试，只做记录(不能测试)
-            ArrayList<Message>  listItem = new ArrayList<>();
-            SendResult send = mqProducer.send(listItem);
+            // 批量消息,需要不大于4M（消息列表分割,超过需要切割）。
+            // 异步批量发送
+            rocketMQTemplate.asyncSend(RocketMQConstant.CLUSTERING_TOPIC_1, message, new SendCallback() {
+                @Override
+                public void onSuccess(SendResult sendResult) {
+                    log.info("消息发送成功。msgId:{}",sendResult.getMsgId());
+                }
+                @Override
+                public void onException(Throwable e) {
+                    log.error("消息发送失败。",e);
+                }
+            });
         }catch (Exception ex) {
             log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_1,message,ex);
         }
