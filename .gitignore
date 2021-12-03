@@ -7,3 +7,5 @@
 target/*
 mvnw/*
 *.mvn
+*/**/target/
+
