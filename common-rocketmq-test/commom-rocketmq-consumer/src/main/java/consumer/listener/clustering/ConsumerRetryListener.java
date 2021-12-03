@@ -20,15 +20,16 @@ import org.springframework.beans.factory.annotation.Value;
 @Slf4j
 //@Component
 // 消费组rocketmq_group_1005，top为clustering-topic5
-@RocketMQMessageListener(topic = RocketMQConstant.CLUSTERING_TOPIC_5,consumerGroup ="${rocketmq.consumer.group5}",consumeMode = ConsumeMode.ORDERLY)
+@RocketMQMessageListener(topic = RocketMQConstant.TOPIC_5,consumerGroup ="${rocketmq.consumer.group5}",consumeMode = ConsumeMode.ORDERLY)
 public class ConsumerRetryListener implements RocketMQListener<MessageExt>, RocketMQPushConsumerLifecycleListener {
     @Value("${rocketmq.consumer.group5}")
     private String groupName;
 
     @Override
     public void onMessage(MessageExt messageExt) {
+        // 注：不捕获，失败默认会重试。也可以捕获做其他逻辑处理（注mq拿不到异常会认为已经消费完成）。
         try {
-            log.info("自定义消息体。拿到消费组：{}，主题Top:{}下消息。消息：{}",groupName,RocketMQConstant.CLUSTERING_TOPIC_5,messageExt.getBody());
+            log.info("自定义消息体。拿到消费组：{}，主题Top:{}下消息。消息：{}",groupName,RocketMQConstant.TOPIC_5,messageExt.getBody());
             int s = 1 / 0;
             log.info("消息重试！！！！！！");
         //} catch (Exception ex) {

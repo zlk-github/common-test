@@ -6,6 +6,7 @@ import org.apache.rocketmq.spring.annotation.ConsumeMode;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * 消费者(顺序消息)--集群模式（1对1）
@@ -15,16 +16,16 @@ import org.springframework.beans.factory.annotation.Value;
  */
 
 @Slf4j
-//@Component
+@Component
 // 消费组rocketmq_group_1004，top为clustering-topic4
-@RocketMQMessageListener(topic = RocketMQConstant.CLUSTERING_TOPIC_4,consumerGroup ="${rocketmq.consumer.group4}", consumeMode = ConsumeMode.ORDERLY)
+@RocketMQMessageListener(topic = RocketMQConstant.TOPIC_4,consumerGroup ="${rocketmq.consumer.group1}", consumeMode = ConsumeMode.ORDERLY)
 public class ConsumerOrderlyListener implements RocketMQListener<String> {
     @Value("${rocketmq.consumer.group4}")
     private String groupName;
 
     @Override
     public void onMessage(String message) {
-        log.info("顺序消息。拿到消费组：{}，主题Top:{}下消息。消息：{}",groupName,RocketMQConstant.CLUSTERING_TOPIC_4,message);
+        log.info("顺序消息。拿到消费组：{}，主题Top:{}下消息。消息：{}",groupName,RocketMQConstant.TOPIC_4,message);
     }
 
 

@@ -17,15 +17,14 @@ import org.springframework.beans.factory.annotation.Value;
 @Slf4j
 //@Component
 // 消费组rocketmq_group_1003，top为clustering-topic3
-@RocketMQMessageListener(topic = RocketMQConstant.CLUSTERING_TOPIC_3,consumerGroup ="${rocketmq.consumer.group3}")
-
+@RocketMQMessageListener(topic = RocketMQConstant.TOPIC_3,consumerGroup ="${rocketmq.consumer.group3}")
 public class ConsumerDelayedListener implements RocketMQListener<MessageExt> {
     @Value("${rocketmq.consumer.group3}")
     private String groupName;
 
     @Override
     public void onMessage(MessageExt messageExt) {
-        log.info("延时消息，拿到消费组：{}，主题Top:{}下消息。消息：{}",groupName,RocketMQConstant.CLUSTERING_TOPIC_3,messageExt.getBody());
+        log.info("延时消息，拿到消费组：{}，主题Top:{}下消息。消息：{}",groupName,RocketMQConstant.TOPIC_3,messageExt.getBody());
         log.info("延时时间：{}",System.currentTimeMillis()-messageExt.getBornTimestamp());
     }
 

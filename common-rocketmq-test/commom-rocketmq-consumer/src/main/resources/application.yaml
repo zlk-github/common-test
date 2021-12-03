@@ -27,7 +27,11 @@ rocketmq :
         group4: "rocketmq_consumer_group_1004"
         group5: "rocketmq_consumer_group_1005"
         group6: "rocketmq_consumer_group_1006"
-        group7: "rocketmq_consumer_group_1007"
+        group7_1: "rocketmq_consumer_group_1007_1"
+        group7_2: "rocketmq_consumer_group_1007_2"
+        group7_3: "rocketmq_consumer_group_1007_3"
+        group7_4: "rocketmq_consumer_group_1007_4"
+        group7_5: "rocketmq_consumer_group_1007_5"
         group8: "rocketmq_consumer_group_1008"
         transaction_group9: "rocketmq_consumer_transaction_group_1009"
         group10: "rocketmq_consumer_group_10010"
@@ -43,4 +47,5 @@ rocketmq :
         #consumeThreadMax: 32
         # 设置一次消费信心的条数，默认1
         #consumeMessageBatchMaxSize: 1
+
 

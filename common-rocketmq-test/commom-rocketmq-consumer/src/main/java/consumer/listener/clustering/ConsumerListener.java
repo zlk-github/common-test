@@ -7,6 +7,7 @@ import org.apache.rocketmq.spring.annotation.MessageModel;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * 消费者--集群模式（1对1）
@@ -16,9 +17,9 @@ import org.springframework.beans.factory.annotation.Value;
  */
 
 @Slf4j
-//@Component
+ @Component
 // 消费组rocketmq_group_1001，top为clustering-topic1
-@RocketMQMessageListener(topic = RocketMQConstant.CLUSTERING_TOPIC_1,consumerGroup ="${rocketmq.consumer.group1}",messageModel = MessageModel.CLUSTERING)
+@RocketMQMessageListener(topic = RocketMQConstant.TOPIC_1,consumerGroup ="${rocketmq.consumer.group1}",messageModel = MessageModel.CLUSTERING)
 
 /*
 说明：
@@ -39,6 +40,6 @@ public class ConsumerListener implements RocketMQListener<Message> {
 
     @Override
     public void onMessage(Message message) {
-        log.info("拿到消费组：{}，主题Top:{}下消息。消息：{}",groupName,RocketMQConstant.CLUSTERING_TOPIC_1,message);
+        log.info("拿到消费组：{}，主题Top:{}下消息。消息：{}",groupName,RocketMQConstant.TOPIC_1,message);
     }
 }

@@ -12,10 +12,10 @@ rocketmq消费者，负责消费rocketmq中对应的mq消息。有消费者服�
 
 ### 1 Rocketmq 介绍
 
-注： rocketmq不允许一个消费者组同时订阅多个topic或者同时做多件事情，也就是消费者只能订阅一个topic、做一件事情。（consumerGroup只能有一个）
+注： 
+    tag模式下需要集群消费需要使用不同的消费组（类似于同一个消费组的广播消费模式），否则存在交叉的tag消息也会被均分导致少消费数据，如不存在交叉tag则不会存在该问题。
 
 ### 参考
-
 
     mq比较https://www.jianshu.com/p/0b1d1fe84e70
 
@@ -28,3 +28,5 @@ rocketmq消费者，负责消费rocketmq中对应的mq消息。有消费者服�
     RocketMQ相关问题：https://blog.csdn.net/javahongxi/article/details/86160085
 
     (详细)https://blog.csdn.net/javahongxi/article/details/86160085
+
+    tag 问题 http://www.zzvips.com/article/203990.html

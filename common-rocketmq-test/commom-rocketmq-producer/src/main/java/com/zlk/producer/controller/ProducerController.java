@@ -53,15 +53,15 @@ public class ProducerController {
         try {
             // 1 同步发送。需要等待Broker的响应 --（常规下使用最多）
             // TOP主题与消息（默认发送超时时间为3秒）
-            SendResult send = rocketMQTemplate.syncSend(RocketMQConstant.CLUSTERING_TOPIC_1, msg);
+            SendResult send = rocketMQTemplate.syncSend(RocketMQConstant.TOPIC_1, msg);
 
             // 超时设置(未测试)
-            //SendResult send = rocketMQTemplate.syncSend(RocketMQConstant.CLUSTERING_TOPIC_1, msg,3000L);
+            //SendResult send = rocketMQTemplate.syncSend(RocketMQConstant.TOPIC_1, msg,3000L);
 
             // 仅仅只是为了看输出，线上不要打该日志，否认会导致效率问题与占用大量服务器存储空间。
             log.info("消息发送成功。msgId:{}",send.getMsgId());
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},Tag:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_1,RocketMQConstant.TAG_1,msg,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},Tag:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_1,RocketMQConstant.TAG_1,msg,ex);
         }
     }
 
@@ -78,7 +78,7 @@ public class ProducerController {
                 sbf.append(msg);
                 sbf.append("-");
                 sbf.append(index);
-                rocketMQTemplate.asyncSend(RocketMQConstant.CLUSTERING_TOPIC_1,msg,new SendCallback() {
+                rocketMQTemplate.asyncSend(RocketMQConstant.TOPIC_1,msg,new SendCallback() {
                     @Override
                     public void onSuccess(SendResult sendResult) {
                         countDownLatch.countDown();
@@ -94,7 +94,7 @@ public class ProducerController {
             // 等待5s(任务跑完，或者未跑完等待5S)
             countDownLatch.await(5, TimeUnit.SECONDS);
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_1,msg,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_1,msg,ex);
         }
     }
 
@@ -103,12 +103,12 @@ public class ProducerController {
     public void sendOneway(@RequestParam String msg){
         try {
             // 3 单向发送消息。发送单向消息，没有任何返回结果 (适合日志场景，不关心发送结果)
-            //rocketMQTemplate.convertAndSend(RocketMQConstant.CLUSTERING_TOPIC_1,msg);
+            //rocketMQTemplate.convertAndSend(RocketMQConstant.TOPIC_1,msg);
 
-            rocketMQTemplate.sendOneWay(RocketMQConstant.CLUSTERING_TOPIC_1,msg);
+            rocketMQTemplate.sendOneWay(RocketMQConstant.TOPIC_1,msg);
             log.info("消息发送");
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_1,msg,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_1,msg,ex);
         }
     }
 
@@ -119,10 +119,10 @@ public class ProducerController {
         try {
             // 带tag发送
             // top+tag（同步）
-            //SendResult send = rocketMQTemplate.syncSend(RocketMQConstant.CLUSTERING_TOPIC_1+":"+RocketMQConstant.TAG_1, msg);
+            //SendResult send = rocketMQTemplate.syncSend(RocketMQConstant.TOPIC_7+":"+tag, msg);
 
             // top+tag（异步）
-            /* rocketMQTemplate.asyncSend(RocketMQConstant.CLUSTERING_TOPIC_1+":"+RocketMQConstant.TAG_1,msg,new SendCallback() {
+            /* rocketMQTemplate.asyncSend(RocketMQConstant.TOPIC_7+":"+tag,msg,new SendCallback() {
                 @Override
                 public void onSuccess(SendResult sendResult) {
                     log.info("消息发送成功。msgId:{}",sendResult.getMsgId());
@@ -135,11 +135,12 @@ public class ProducerController {
 
             // 好处，topic是有限的，但是topic下可以使用tag再分组,且可以支持简单的筛选。
             // topic ,tag。
-            rocketMQTemplate.convertAndSend(RocketMQConstant.CLUSTERING_TOPIC_7+":"+tag,msg);
+            SendResult send = rocketMQTemplate.syncSend(RocketMQConstant.TOPIC_7+":"+tag, msg);
+            log.info("消息发送成功。msgId:{}",send.getMsgId());
             // 发一条不带tag用来测试
-            //rocketMQTemplate.convertAndSend(RocketMQConstant.CLUSTERING_TOPIC_7,msg+"不带tag");
+            //rocketMQTemplate.convertAndSend(RocketMQConstant.TOPIC_7,msg+"不带tag");
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},Tag:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_7,tag,msg,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},Tag:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_7,tag,msg,ex);
         }
     }
 
@@ -149,10 +150,10 @@ public class ProducerController {
     public void sendUser(@RequestBody UserVO userVO){
         try {
             // 自定义消息体
-            SendResult send = rocketMQTemplate.syncSend(RocketMQConstant.CLUSTERING_TOPIC_2, userVO);
+            SendResult send = rocketMQTemplate.syncSend(RocketMQConstant.TOPIC_2, userVO);
             log.info("消息发送,msgId:{}",send.getMsgId());
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_2,userVO,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_2,userVO,ex);
         }
     }
 
@@ -166,10 +167,10 @@ public class ProducerController {
             // 比如电商里，提交了一个订单就可以发送一个延时消息，1h后去检查这个订单的状态，如果还是未付款就取消订单释放库存。
             // 设置延时等级3,这个消息将在10s之后发送(现在只支持固定的几个时间,详看delayTimeLevel)
             //private String messageDelayLevel = "1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h";
-            SendResult send = rocketMQTemplate.syncSend(RocketMQConstant.CLUSTERING_TOPIC_3, MessageBuilder.withPayload(msg).build(), 3000, 3);
+            SendResult send = rocketMQTemplate.syncSend(RocketMQConstant.TOPIC_3, MessageBuilder.withPayload(msg).build(), 3000, 3);
             log.info("消息发送,msgId:{}",send.getMsgId());
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_3,msg,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_3,msg,ex);
         }
     }
 
@@ -186,11 +187,11 @@ public class ProducerController {
             // 同一个OrderId获取到的肯定是同一个队列。
 
             // 发送顺序消息：预期结构hashkey（订单号）相同的一组数据（一个订单的创建，付款，推送，完成，发送短信），会按消息发送的先后顺序进行消费。
-            //SendResult send = rocketMQTemplate.syncSendOrderly(RocketMQConstant.CLUSTERING_TOPIC_4, MessageBuilder.withPayload(msg).build(), sort);
-            SendResult send = rocketMQTemplate.syncSendOrderly(RocketMQConstant.CLUSTERING_TOPIC_4, msg, hashkey);
+            //SendResult send = rocketMQTemplate.syncSendOrderly(RocketMQConstant.TOPIC_4, MessageBuilder.withPayload(msg).build(), sort);
+            SendResult send = rocketMQTemplate.syncSendOrderly(RocketMQConstant.TOPIC_4, msg, hashkey);
             log.info("消息发送,msgId:{}",send.getMsgId());
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_4,msg,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_4,msg,ex);
         }
     }
 
@@ -200,10 +201,10 @@ public class ProducerController {
     public void retrySend(@RequestBody String message, String hashkey){
         try {
             // 该处测试消费失败重试
-            SendResult send = rocketMQTemplate.syncSendOrderly(RocketMQConstant.CLUSTERING_TOPIC_5, message, hashkey);
+            SendResult send = rocketMQTemplate.syncSendOrderly(RocketMQConstant.TOPIC_5, message, hashkey);
             log.info("消息发送,msgId:{}",send.getMsgId());
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_5,message,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_5,message,ex);
         }
     }
 
@@ -213,7 +214,7 @@ public class ProducerController {
         try {
             // 批量消息,需要不大于4M（消息列表分割,超过需要切割）。
             // 异步批量发送
-            rocketMQTemplate.asyncSend(RocketMQConstant.CLUSTERING_TOPIC_1, message, new SendCallback() {
+            rocketMQTemplate.asyncSend(RocketMQConstant.TOPIC_1, message, new SendCallback() {
                 @Override
                 public void onSuccess(SendResult sendResult) {
                     log.info("消息发送成功。msgId:{}",sendResult.getMsgId());
@@ -224,7 +225,7 @@ public class ProducerController {
                 }
             });
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_1,message,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_1,message,ex);
         }
     }
 
@@ -233,14 +234,14 @@ public class ProducerController {
     public void transactionSend(@RequestBody String msg){
         try {
             //  事务消息：RocketMQ采用了2PC的思想来实现了提交事务消息，同时增加一个补偿逻辑来处理二阶段超时或者失败的消息。（不支持延时消息和批量消息）
-            Message message = new Message(RocketMQConstant.CLUSTERING_TOPIC_9,msg.getBytes(StandardCharsets.UTF_8));
+            Message message = new Message(RocketMQConstant.TOPIC_9,msg.getBytes(StandardCharsets.UTF_8));
             for (int i = 0; i < 5; i++) {
                 //destination为消息发送的topic，message为消息体，arg为传递给本地函数参数
-                TransactionSendResult transaction = extRocketMQTemplate.sendMessageInTransaction(RocketMQConstant.CLUSTERING_TOPIC_9, MessageBuilder.withPayload(msg).build(), i);
+                TransactionSendResult transaction = extRocketMQTemplate.sendMessageInTransaction(RocketMQConstant.TOPIC_9, MessageBuilder.withPayload(msg).build(), i);
                 log.info("发送状态：{}",transaction.getLocalTransactionState());
             }
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{}",extRocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_9,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{}",extRocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_9,ex);
         }
     }
 

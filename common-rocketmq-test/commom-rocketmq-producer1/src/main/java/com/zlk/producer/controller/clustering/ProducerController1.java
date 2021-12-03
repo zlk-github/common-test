@@ -38,7 +38,7 @@ public class ProducerController1 {
     @ApiOperation("发送普通消息-同步消息，需要等待Broker的响应")
     public void send(@RequestParam String msg){
         try {
-            Message message = new Message(RocketMQConstant.CLUSTERING_TOPIC_7, RocketMQConstant.TAG_1, msg.getBytes(StandardCharsets.UTF_8));
+            Message message = new Message(RocketMQConstant.TOPIC_7, RocketMQConstant.TAG_1, msg.getBytes(StandardCharsets.UTF_8));
             // 1 同步发送。需要等待Broker的响应 --（常规下使用最多）
             // 默认发送超时时间为3秒
             SendResult send = mqProducer.send(message);
@@ -47,7 +47,7 @@ public class ProducerController1 {
             // 如果不再发送消息，关闭Producer实例。
             mqProducer.shutdown();
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},Tag:{},消息:{}",mqProducer.getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_7,RocketMQConstant.TAG_1,msg,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},Tag:{},消息:{}",mqProducer.getNamesrvAddr(),RocketMQConstant.TOPIC_7,RocketMQConstant.TAG_1,msg,ex);
         }
     }
 
@@ -65,7 +65,7 @@ public class ProducerController1 {
                 sbf.append(msg);
                 sbf.append("-");
                 sbf.append(index);
-                Message message = new Message(RocketMQConstant.CLUSTERING_TOPIC_7, RocketMQConstant.TAG_1, sbf.toString().getBytes());
+                Message message = new Message(RocketMQConstant.TOPIC_7, RocketMQConstant.TAG_1, sbf.toString().getBytes());
                 mqProducer.send(message,new SendCallback() {
                     @Override
                     public void onSuccess(SendResult sendResult) {
@@ -85,7 +85,7 @@ public class ProducerController1 {
             // 如果不再发送消息，关闭Producer实例。
             //mqProducer.shutdown();
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},Tag:{},消息:{}",mqProducer.getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_7,RocketMQConstant.TAG_1,msg,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},Tag:{},消息:{}",mqProducer.getNamesrvAddr(),RocketMQConstant.TOPIC_7,RocketMQConstant.TAG_1,msg,ex);
         }
     }
 
@@ -93,7 +93,7 @@ public class ProducerController1 {
     @ApiOperation("发送普通消息-单向消息，没有任何返回")
     public void sendOneway(@RequestParam String msg){
         try {
-            Message message = new Message(RocketMQConstant.CLUSTERING_TOPIC_7, RocketMQConstant.TAG_1, msg.getBytes());
+            Message message = new Message(RocketMQConstant.TOPIC_7, RocketMQConstant.TAG_1, msg.getBytes());
             // 3 单向发送消息。发送单向消息，没有任何返回结果 (适合日志场景，不关心发送结果)
             mqProducer.sendOneway(message);
             // 仅仅只是为了看输出，线上不要打该日志，否认会导致效率问题与占用大量服务器存储空间。
@@ -101,7 +101,7 @@ public class ProducerController1 {
             // 如果不再发送消息，关闭Producer实例。
             //mqProducer.shutdown();
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},Tag:{},消息:{}",mqProducer.getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_7,RocketMQConstant.TAG_1,msg,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},Tag:{},消息:{}",mqProducer.getNamesrvAddr(),RocketMQConstant.TOPIC_7,RocketMQConstant.TAG_1,msg,ex);
         }
     }
 

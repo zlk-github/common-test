@@ -26,7 +26,7 @@ public class ProducerControllerTest {
 
     @Test
     public void testSyncSend(){
-        String msg = "这是一条同步消息！";
+        String msg = "这是一条同步消息20211202！";
         producerController.syncSend(msg);
     }
 
@@ -48,6 +48,7 @@ public class ProducerControllerTest {
         String msg = "这是一条带tag的消息。tag:";
         producerController.tagSend(msg+RocketMQConstant.TAG_1, RocketMQConstant.TAG_1);
         producerController.tagSend(msg+RocketMQConstant.TAG_2, RocketMQConstant.TAG_2);
+        producerController.tagSend(msg+"111", "111");
     }
 
     @Test

@@ -9,8 +9,8 @@ import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
- * 消费者--广播模式（1对多）
- *     注：集群消费（Clustering）：相同消费组下的消费者都会平均分摊消息。（1对1）
+ * 消费者--广播模式（1对多，相同消费组全量接收消息）
+ *     注： 广播消费（Broadcasting），相同Consumer Group的每个Consumer实例都接收全量的消息。
  * @author likuan.zhou
  * @date 2021/11/1/001 8:33
  */
@@ -18,27 +18,13 @@ import org.springframework.beans.factory.annotation.Value;
 @Slf4j
 //@Component
 // 消费组rocketmq_group_1001，top为clustering-topic1
-@RocketMQMessageListener(topic = RocketMQConstant.CLUSTERING_TOPIC_1,consumerGroup ="${rocketmq.consumer.group1}",messageModel = MessageModel.CLUSTERING)
-
-/*
-说明：
-nameServer指定mq集群
-topic为主题，
-consumerGroup为消费组，
-consumeMode=ConsumeMode.ORDERLY为消费失败重试(默认不重试(官方是一直重试))
-reconsumeTimes为重试次数（reconsumeTimes = -1 代表一直重试）
-consumeMode消息类型（ConsumeMode.ORDERLY为顺序消息）
-messageModel消费模式（默认集群消费）
-@RocketMQMessageListener(nameServer = "127.0.0.1:9877", topic = "test-topic-4", consumerGroup = "my-consumer_test-topic-6",
-        consumeMode = ConsumeMode.ORDERLY, reconsumeTimes = -1, consumeMode = ConsumeMode.ORDERLY,messageModel = MessageModel.CLUSTERING)
-*/
-
+@RocketMQMessageListener(topic = RocketMQConstant.TOPIC_1,consumerGroup ="${rocketmq.consumer.group1}",messageModel = MessageModel.BROADCASTING)
 public class ConsumerListener implements RocketMQListener<Message> {
     @Value("${rocketmq.consumer.group1}")
     private String groupName;
 
     @Override
     public void onMessage(Message message) {
-        log.info("拿到消费组：{}，主题Top:{}下消息。消息：{}",groupName,RocketMQConstant.CLUSTERING_TOPIC_1,message);
+        log.info("广播模式--》拿到消费组：{}，主题Top:{}下消息。消息：{}",groupName,RocketMQConstant.TOPIC_1,message);
     }
 }

@@ -45,11 +45,11 @@ public class ProducerTransactionController {
             for (int i = 0; i < 5; i++) {
                 //destination为消息发送的topic，message为消息体，arg为传递给本地函数参数
                 Message<OrderDTO> build = MessageBuilder.withPayload(orderDTO).setHeader("key", orderDTO.getId()).build();
-                TransactionSendResult transaction = extRocketMQTemplate.sendMessageInTransaction(RocketMQConstant.CLUSTERING_TOPIC_9,build, i);
+                TransactionSendResult transaction = extRocketMQTemplate.sendMessageInTransaction(RocketMQConstant.TOPIC_9,build, i);
                 log.info("发送状态：{}",transaction.getLocalTransactionState());
             }
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{}",extRocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_9,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{}",extRocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_9,ex);
         }
     }
 
@@ -60,11 +60,11 @@ public class ProducerTransactionController {
             //  事务消息：RocketMQ采用了2PC的思想来实现了提交事务消息，同时增加一个补偿逻辑来处理二阶段超时或者失败的消息。（不支持延时消息和批量消息）
             for (int i = 0; i < 5; i++) {
                 //destination为消息发送的topic，message为消息体，arg为传递给本地函数参数
-                TransactionSendResult transaction = extRocketMQTemplate2.sendMessageInTransaction(RocketMQConstant.CLUSTERING_TOPIC_9, MessageBuilder.withPayload(msg).build(), i);
+                TransactionSendResult transaction = extRocketMQTemplate2.sendMessageInTransaction(RocketMQConstant.TOPIC_9, MessageBuilder.withPayload(msg).build(), i);
                 log.info("发送状态：{}",transaction.getLocalTransactionState());
             }
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{}",extRocketMQTemplate2.getProducer().getNamesrvAddr(),RocketMQConstant.CLUSTERING_TOPIC_9,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{}",extRocketMQTemplate2.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_9,ex);
         }
     }
 

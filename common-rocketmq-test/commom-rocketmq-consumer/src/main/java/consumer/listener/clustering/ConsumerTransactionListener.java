@@ -17,13 +17,14 @@ import org.springframework.messaging.Message;
 
 @Slf4j
 //@Component
-@RocketMQMessageListener(topic = RocketMQConstant.CLUSTERING_TOPIC_9,consumerGroup ="${rocketmq.consumer.transaction_group9}")
+@RocketMQMessageListener(topic = RocketMQConstant.TOPIC_9,consumerGroup ="${rocketmq.consumer.transaction_group9}")
 public class ConsumerTransactionListener implements RocketMQListener<Message> {
+    // 注：事务是在生产者端做
     @Value("${rocketmq.consumer.transaction_group9}")
     private String groupName;
 
     @Override
     public void onMessage(Message message) {
-        log.info("拿到消费组：{}，主题Top:{}下消息。消息：{}",groupName,RocketMQConstant.CLUSTERING_TOPIC_1,message);
+        log.info("拿到消费组：{}，主题Top:{}下消息。消息：{}",groupName,RocketMQConstant.TOPIC_1,message);
     }
 }
