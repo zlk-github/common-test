@@ -14,6 +14,7 @@
         <module>common-db-test</module>
         <module>common-redis-test</module>
         <module>common-rocketmq-test</module>
+        <module>common-rabbitmq-test</module>
     </modules>
 
     <parent>

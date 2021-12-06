@@ -67,6 +67,4 @@ public class ProducerTransactionController {
             log.error("消息发送失败，MQ主机信息：{}，Top:{}",extRocketMQTemplate2.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_9,ex);
         }
     }
-
-
 }
