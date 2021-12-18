@@ -230,6 +230,8 @@ rocketmq :
 ##### 3.1.2 顺序消息
 
     顺序消息：RocketMQ可以严格的保证消息有序，可以分为分区有序(设置key)或者全局有序。
+    全局有序：需要设置topic下读写队列数量为1。（性能低，实际中使用少）
+    分区有序：（性能高，实际中使用少）
 
 ##### 3.1.3 延时消息
 
@@ -282,3 +284,5 @@ rocketmq :
     事务消息问题：https://github.com/apache/rocketmq-spring/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98
 
     事务消息参考：https://xie.infoq.cn/article/414b50d4d118738c150010260
+
+    顺序消息参考：https://blog.csdn.net/hosaos/article/details/90675978

@@ -10,6 +10,7 @@
     
     Rocketmq开源项目(集群监控)：incubator-rocketmq-externals
         参考：https://www.jianshu.com/p/63f4062b661d
+        或者RocketMQ-DashBoard
 
     mqadmin管理工具(命令操作)：
         进入RocketMQ安装位置，在bin目录下执行

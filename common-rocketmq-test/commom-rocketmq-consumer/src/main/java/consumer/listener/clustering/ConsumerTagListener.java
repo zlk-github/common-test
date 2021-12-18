@@ -46,13 +46,14 @@ public class ConsumerTagListener implements RocketMQListener<MessageExt> , Rocke
         // 如下，设置其它consumer相关属性
         defaultMQPushConsumer.setPullBatchSize(16);
 
-      /*  defaultMQPushConsumer.setConsumeThreadMin(2); //消费端拉去到消息以后分配线索去消费
+      /*  defaultMQPushConsumer.setConsumeThreadMin(2); //消费端拉去到消息以后分配线程去消费
         defaultMQPushConsumer.setConsumeThreadMax(10);//最大消费线程，一般情况下，默认队列没有塞满，是不会启用新的线程的
         defaultMQPushConsumer.setPullInterval(1000);//消费端多久一次去rocketMq 拉去消息
-        defaultMQPushConsumer.setPullBatchSize(32);     //消费端每个队列一次拉去多少个消息，若该消费端分赔了N个监控队列，那么消费端每次去rocketMq拉去消息说为N*1
+        defaultMQPushConsumer.setPullBatchSize(32);     //消费端每个队列一次拉去多少个消息，若该消费端分配了N个监控队列，那么消费端每次去rocketMq拉去消息说为N*1
         defaultMQPushConsumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_TIMESTAMP);
         defaultMQPushConsumer.setConsumeTimestamp(UtilAll.timeMillisToHumanString3(System.currentTimeMillis()));
         defaultMQPushConsumer.setConsumeMessageBatchMaxSize(2);*/
+        // 参考https://blog.csdn.net/qq_29978863/article/details/107604184?spm=1001.2101.3001.6650.6&utm_medium=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~default-6.showsourcetag&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromBaidu~default-6.showsourcetag
     }
 
 }
