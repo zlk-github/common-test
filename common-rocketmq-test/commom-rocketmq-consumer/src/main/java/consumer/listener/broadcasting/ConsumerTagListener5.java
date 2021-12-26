@@ -28,6 +28,9 @@ public class ConsumerTagListener5 implements RocketMQListener<MessageExt> , Rock
     @Value("${rocketmq.consumer.group1}")
     private String groupName;
 
+
+
+
     @Override
     public void onMessage(MessageExt messageExt) {
         String message = new String((byte[]) messageExt.getBody(), StandardCharsets.UTF_8);
