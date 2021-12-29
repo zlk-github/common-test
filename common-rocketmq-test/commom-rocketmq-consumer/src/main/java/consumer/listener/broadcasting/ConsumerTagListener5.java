@@ -23,9 +23,9 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 @Component
 // 消费组rocketmq_group_1007，top为clustering-topic7
-@RocketMQMessageListener(topic = RocketMQConstant.TOPIC_7,consumerGroup ="${rocketmq.consumer.group7_5}",selectorExpression = RocketMQConstant.TAG_1_OR_TAG_2,messageModel = MessageModel.BROADCASTING)
+@RocketMQMessageListener(topic = RocketMQConstant.TOPIC_7,consumerGroup ="${rocketmq.consumer.group7_6}",selectorExpression = RocketMQConstant.TAG_1_OR_TAG_2,messageModel = MessageModel.BROADCASTING)
 public class ConsumerTagListener5 implements RocketMQListener<MessageExt> , RocketMQPushConsumerLifecycleListener {
-    @Value("${rocketmq.consumer.group1}")
+    @Value("${rocketmq.consumer.group7_6}")
     private String groupName;
 
 

@@ -154,13 +154,15 @@ swagger:
 
 ################rocketmq配置################
 #而且注意这里不要写为spring.rocketmq.producer.group，这个版本的写法不一样（rocketmq-spring-boot-starte2.0.4）
+################rocketmq配置(生产者)################
+# 注rocketmq的生产组不是消费组
 rocketmq :
     # mq的nameserver地址
     name-server: 47.119.180.152:9876
     # 生产者配置
     producer:
         # 发送同一类消息设置为同一个group，保证唯一默认不需要设置，rocketmq会使用ip@pid（pid代表jvm名字）作为唯一标识
-        group: "rocketmq_producer_group_1001"
+        group: "rocketmq_producer_group"
         # 发送消息超时时间，默认 3000
         send-message-timeout: 3000
         # 发送消息失败重试次数，默认2
@@ -189,8 +191,10 @@ swagger:
     enable: true
 
 
-################rocketmq配置################
-#而且注意这里不要写为spring.rocketmq.producer.group，这个版本的写法不一样（rocketmq-spring-boot-starte2.0.4）
+################rocketmq配置（消费者）################
+# 注rocketmq的消费组不是生产组
+# 每一个消费组对应消费一个Topic或者Topc下的一组tag。
+# 不要一个消费者消费不同的Tiopc或者多组Topc下的tag集合。
 rocketmq :
     # mq的nameserver地址
     name-server: 47.119.180.152:9876

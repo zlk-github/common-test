@@ -25,7 +25,7 @@ import java.nio.charset.StandardCharsets;
 // 消费组rocketmq_group_1007，top为clustering-topic7
 @RocketMQMessageListener(topic = RocketMQConstant.TOPIC_7,consumerGroup ="${rocketmq.consumer.group7_5}",messageModel = MessageModel.BROADCASTING)
 public class ConsumerTagListener6 implements RocketMQListener<MessageExt> , RocketMQPushConsumerLifecycleListener {
-    @Value("${rocketmq.consumer.group1}")
+    @Value("${rocketmq.consumer.group7_5}")
     private String groupName;
 
     @Override
