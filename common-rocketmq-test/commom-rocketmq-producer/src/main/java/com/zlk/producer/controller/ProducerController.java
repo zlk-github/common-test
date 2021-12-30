@@ -54,10 +54,6 @@ public class ProducerController {
             // 1 同步发送。需要等待Broker的响应 --（常规下使用最多）
             // TOP主题与消息（默认发送超时时间为3秒）
             SendResult send = rocketMQTemplate.syncSend(RocketMQConstant.TOPIC_1, msg);
-
-            // 超时设置(未测试)
-            //SendResult send = rocketMQTemplate.syncSend(RocketMQConstant.TOPIC_1, msg,3000L);
-
             // 仅仅只是为了看输出，线上不要打该日志，否认会导致效率问题与占用大量服务器存储空间。
             log.info("消息发送成功。msgId:{}",send.getMsgId());
         }catch (Exception ex) {

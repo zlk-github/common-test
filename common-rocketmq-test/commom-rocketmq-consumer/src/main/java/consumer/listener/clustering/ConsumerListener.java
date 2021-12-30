@@ -24,16 +24,14 @@ import org.springframework.stereotype.Component;
 /*
 说明：
 nameServer指定mq集群
-topic为主题，
-consumerGroup为消费组，
-consumeMode=ConsumeMode.ORDERLY为消费失败重试(默认不重试(官方是一直重试))
-reconsumeTimes为重试次数（reconsumeTimes = -1 代表一直重试）
-consumeMode消息类型（ConsumeMode.ORDERLY为顺序消息）
-messageModel消费模式（默认集群消费）
+topic为主题
+consumerGroup为消费组（不是生产组），
+consumeMode消息类型（ConsumeMode.ORDERLY为顺序消息，默认非顺序）
+messageModel消费模式（默认集群消费）--集群消费messageModel = MessageModel.CLUSTERING，广播消费messageModel = MessageModel.BROADCASTING
+selectorExpression指定tag过滤条件  --默认全部Topic下tag
 @RocketMQMessageListener(nameServer = "127.0.0.1:9877", topic = "test-topic-4", consumerGroup = "my-consumer_test-topic-6",
-        consumeMode = ConsumeMode.ORDERLY, reconsumeTimes = -1, consumeMode = ConsumeMode.ORDERLY,messageModel = MessageModel.CLUSTERING)
+        consumeMode = ConsumeMode.ORDERLY,messageModel = MessageModel.CLUSTERING)
 */
-
 public class ConsumerListener implements RocketMQListener<Message> {
     @Value("${rocketmq.consumer.group1}")
     private String groupName;
