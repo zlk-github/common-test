@@ -83,7 +83,6 @@ public class ProducerControllerTest {
         producerController.syncSendOrderly("订单1003推送","1003");
         producerController.syncSendOrderly("订单1003完成","1003");
         producerController.syncSendOrderly("订单1003发送短信","1003");
-
     }
 
     @Test

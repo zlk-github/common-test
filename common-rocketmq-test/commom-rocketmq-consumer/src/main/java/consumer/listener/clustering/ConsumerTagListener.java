@@ -9,7 +9,6 @@ import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.apache.rocketmq.spring.core.RocketMQPushConsumerLifecycleListener;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 
@@ -23,7 +22,7 @@ import java.nio.charset.StandardCharsets;
  */
 
 @Slf4j
-@Component
+//@Component
 // 消费组rocketmq_group_1007，top为clustering-topic7
 @RocketMQMessageListener(topic = RocketMQConstant.TOPIC_7,consumerGroup ="${rocketmq.consumer.group7_1}",selectorExpression = RocketMQConstant.TAG_1)
 public class ConsumerTagListener implements RocketMQListener<MessageExt> , RocketMQPushConsumerLifecycleListener {

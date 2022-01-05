@@ -9,7 +9,6 @@ import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.apache.rocketmq.spring.core.RocketMQPushConsumerLifecycleListener;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 
@@ -22,10 +21,13 @@ import java.nio.charset.StandardCharsets;
  * @date 2021/11/1/001 8:33
  */
 
+/**
+ * 消费者(全量tag过滤消息)--集群模式
+ */
 @Slf4j
-@Component
+//@Component
 // 消费组rocketmq_group_1007，top为clustering-topic7
-@RocketMQMessageListener(topic = RocketMQConstant.TOPIC_7,consumerGroup ="${rocketmq.consumer.group7_1}")
+@RocketMQMessageListener(topic = RocketMQConstant.TOPIC_7,consumerGroup ="${rocketmq.consumer.group7_3}")
 public class ConsumerTagListener3 implements RocketMQListener<MessageExt> , RocketMQPushConsumerLifecycleListener {
     @Value("${rocketmq.consumer.group7_3}")
     private String groupName;
@@ -33,7 +35,8 @@ public class ConsumerTagListener3 implements RocketMQListener<MessageExt> , Rock
     @Override
     public void onMessage(MessageExt messageExt) {
         String message = new String((byte[]) messageExt.getBody(), StandardCharsets.UTF_8);
-        log.info("tag(全部)过滤消息。拿到消费组：{}，consumerGroup：{}，主题Top:{}下消息,tag:{},消息：{}","rocketmq_consumer_group_1007_3",groupName,RocketMQConstant.TOPIC_7,messageExt.getTags(),message);
+        log.info("tag(全部)过滤消息。拿到消费组：{}，consumerGroup：{}，主题Top:{}下消息,tag:{},消息：{}","rocketmq_consumer_group_1007_3",
+                groupName,RocketMQConstant.TOPIC_7,messageExt.getTags(),message);
     }
 
     @SneakyThrows
@@ -46,5 +49,4 @@ public class ConsumerTagListener3 implements RocketMQListener<MessageExt> , Rock
         // 如下，设置其它consumer相关属性
         defaultMQPushConsumer.setPullBatchSize(16);
     }
-
 }

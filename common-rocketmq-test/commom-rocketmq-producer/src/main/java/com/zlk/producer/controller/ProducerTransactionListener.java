@@ -36,7 +36,6 @@ public class ProducerTransactionListener implements RocketMQLocalTransactionList
     @Autowired
     private OrderService orderService;
 
-
     //executeLocalTransaction 方法来执行本地事务
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -75,9 +74,9 @@ public class ProducerTransactionListener implements RocketMQLocalTransactionList
             localTransMap.put(id,RocketMQLocalTransactionState.COMMIT);
         } catch (Exception ex) {
             // ROLLBACK需要再次发送，需要使用定时任务或者手动补偿。不会走checkLocalTransaction。因为本身入库是失败的。
-            log.info("执行异常，本地事务回滚ROLLBACK。id:{},message：{}",id,message);
-            result = RocketMQLocalTransactionState.ROLLBACK;
-            localTransMap.put(id,RocketMQLocalTransactionState.ROLLBACK);
+             log.info("执行异常，本地事务回滚ROLLBACK。id:{},message：{}",id,message);
+             result = RocketMQLocalTransactionState.ROLLBACK;
+             localTransMap.put(id,RocketMQLocalTransactionState.ROLLBACK);
         }
         return result;
     }
@@ -94,10 +93,12 @@ public class ProducerTransactionListener implements RocketMQLocalTransactionList
         log.info("【执行检查任务】+id:{},transactionState:{}",id,rocketMQLocalTransactionState);
         // 库里面已入成功，提交commit到mq。否则将mq事务回滚
         Order order = orderService.getById(id);
+        // 判断提交或者回滚
         if (Objects.isNull(order)) {
+            log.info("【执行检查任务结果为ROLLBACK】+order:{},transactionState:{}",order,RocketMQLocalTransactionState.ROLLBACK);
             return RocketMQLocalTransactionState.ROLLBACK;
         }
-        // 判断提交或者回滚
+        log.info("【执行检查任务结果COMMIT】+order:{},transactionState:{}",order,RocketMQLocalTransactionState.ROLLBACK);
         return RocketMQLocalTransactionState.COMMIT;
     }
 }

@@ -130,13 +130,14 @@ public class ProducerController {
             });*/
 
             // 好处，topic是有限的，但是topic下可以使用tag再分组,且可以支持简单的筛选。
-            // topic ,tag。
+            // topic:tag。
             SendResult send = rocketMQTemplate.syncSend(RocketMQConstant.TOPIC_7+":"+tag, msg);
             log.info("消息发送成功。msgId:{}",send.getMsgId());
             // 发一条不带tag用来测试
-            //rocketMQTemplate.convertAndSend(RocketMQConstant.TOPIC_7,msg+"不带tag");
+            // rocketMQTemplate.convertAndSend(RocketMQConstant.TOPIC_7,msg+"不带tag");
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},Tag:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_7,tag,msg,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},Tag:{},消息:{}",
+                    rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_7,tag,msg,ex);
         }
     }
 
@@ -149,29 +150,32 @@ public class ProducerController {
             SendResult send = rocketMQTemplate.syncSend(RocketMQConstant.TOPIC_2, userVO);
             log.info("消息发送,msgId:{}",send.getMsgId());
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_2,userVO,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",
+                    rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_2,userVO,ex);
         }
     }
 
 
-   @PostMapping("/send/delayed")
+    @PostMapping("/send/delayed")
     @ApiOperation("发送延时队列")
     public void sendDelayed(@RequestBody String msg){
         try {
             // 发送延时队列
             // 延时消息的使用场景
             // 比如电商里，提交了一个订单就可以发送一个延时消息，1h后去检查这个订单的状态，如果还是未付款就取消订单释放库存。
-            // 设置延时等级3,这个消息将在10s之后发送(现在只支持固定的几个时间,详看delayTimeLevel)
+            // 如设置延时等级3,这个消息将在10s之后发送(现在只支持固定的几个时间,详看delayTimeLevel)
             //private String messageDelayLevel = "1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h";
-            SendResult send = rocketMQTemplate.syncSend(RocketMQConstant.TOPIC_3, MessageBuilder.withPayload(msg).build(), 3000, 3);
+            SendResult send = rocketMQTemplate.syncSend(RocketMQConstant.TOPIC_3,
+                    MessageBuilder.withPayload(msg).build(), 3000, 3);
             log.info("消息发送,msgId:{}",send.getMsgId());
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_3,msg,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",
+                    rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_3,msg,ex);
         }
     }
 
     @PostMapping("/sync/send/orderly")
-    @ApiOperation("发送顺序消息")
+    @ApiOperation("发送分区顺序消息")
     public void syncSendOrderly(@RequestBody String msg,String hashkey){
         try {
             //消息有序指的是可以按照消息的发送顺序来消费(FIFO)。RocketMQ可以严格的保证消息有序，可以分为分区有序或者全局有序。

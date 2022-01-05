@@ -14,7 +14,7 @@ public interface OrderService {
      * 插入数据
      * @param order 订单
      */
-    void add(Order order);
+    void add(Order order) throws Exception;
 
     /**
      * 更新数据

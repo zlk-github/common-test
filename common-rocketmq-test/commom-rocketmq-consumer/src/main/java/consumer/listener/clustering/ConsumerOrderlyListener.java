@@ -6,19 +6,19 @@ import org.apache.rocketmq.spring.annotation.ConsumeMode;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 /**
- * 消费者(顺序消息)--集群模式（1对1）
- *     注：集群消费（Clustering）：相同消费组下的消费者都会平均分摊消息。（1对1）
+ * 消费者(顺序消息)--集群模式
+ *     注：集群消费（Clustering）：相同消费组下的消费者都会平均分摊消息。
  * @author likuan.zhou
  * @date 2021/11/1/001 8:33
  */
 
 @Slf4j
-@Component
+//@Component
 // 消费组rocketmq_group_1004，top为clustering-topic4
-@RocketMQMessageListener(topic = RocketMQConstant.TOPIC_4,consumerGroup ="${rocketmq.consumer.group1}", consumeMode = ConsumeMode.ORDERLY)
+@RocketMQMessageListener(topic = RocketMQConstant.TOPIC_4,consumerGroup ="${rocketmq.consumer.group4}",
+        consumeMode = ConsumeMode.ORDERLY)
 public class ConsumerOrderlyListener implements RocketMQListener<String> {
     @Value("${rocketmq.consumer.group4}")
     private String groupName;
@@ -27,6 +27,4 @@ public class ConsumerOrderlyListener implements RocketMQListener<String> {
     public void onMessage(String message) {
         log.info("顺序消息。拿到消费组：{}，主题Top:{}下消息。消息：{}",groupName,RocketMQConstant.TOPIC_4,message);
     }
-
-
 }

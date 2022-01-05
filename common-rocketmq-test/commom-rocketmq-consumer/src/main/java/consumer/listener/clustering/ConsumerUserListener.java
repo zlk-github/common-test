@@ -8,8 +8,8 @@ import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
- * 消费者(自定义消息体)--集群模式（1对1）
- *     注：集群消费（Clustering）：相同消费组下的消费者都会平均分摊消息。（1对1）
+ * 消费者(自定义消息体)--集群模式（
+ *     注：集群消费（Clustering）：相同消费组下的消费者都会平均分摊消息。
  * @author likuan.zhou
  * @date 2021/11/1/001 8:33
  */
@@ -26,6 +26,4 @@ public class ConsumerUserListener implements RocketMQListener<UserVO> {
     public void onMessage(UserVO message) {
         log.info("自定义消息体。拿到消费组：{}，主题Top:{}下消息。消息：{}",groupName,RocketMQConstant.TOPIC_2,message);
     }
-
-
 }

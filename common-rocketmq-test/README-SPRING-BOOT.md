@@ -271,7 +271,8 @@ public class ProducerController {
             SendResult send = rocketMQTemplate.syncSend(RocketMQConstant.TOPIC_1, msg);
             log.info("消息发送成功。msgId:{}",send.getMsgId());
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},Tag:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_1,RocketMQConstant.TAG_1,msg,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},Tag:{},消息:{}",
+                    rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_1,RocketMQConstant.TAG_1,msg,ex);
         }
     }
 
@@ -287,7 +288,8 @@ public class ProducerController {
                 sbf.append(msg);
                 sbf.append("-");
                 sbf.append(index);
-                // 2 发送异步消息。不需要等待Broker的响应 --（大批量，但是对响应时间要求严的接口等，可以集合计算器countDownLatch 使用）
+                // 2 发送异步消息。不需要等待Broker的响应 --（大批量，但是对响应时间要求严的接口等，
+                // 可以集合计算器countDownLatch 使用）
                 rocketMQTemplate.asyncSend(RocketMQConstant.TOPIC_1,msg,new SendCallback() {
                     @Override
                     public void onSuccess(SendResult sendResult) {
@@ -306,7 +308,8 @@ public class ProducerController {
             // 计数器清0或者等待5s(任务跑完，或者未跑完等待5S)
             countDownLatch.await(5, TimeUnit.SECONDS);
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_1,msg,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",
+                    ![img.png](img.png)rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_1,msg,ex);
         }
     }
 
@@ -319,7 +322,8 @@ public class ProducerController {
             rocketMQTemplate.sendOneWay(RocketMQConstant.TOPIC_1,msg);
             log.info("消息发送");
         }catch (Exception ex) {
-            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_1,msg,ex);
+            log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",
+                    rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_1,msg,ex);
         }
     }
 

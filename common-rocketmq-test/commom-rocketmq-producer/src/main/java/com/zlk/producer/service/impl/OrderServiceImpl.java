@@ -18,9 +18,13 @@ public class OrderServiceImpl implements OrderService {
     // concurrentMap线程安全 速度慢 分段锁 不是整体锁(concurrentMap适用于多个线程同时要操作一个map的数据). 但是不能保证线程同步顺序。
     private static final ConcurrentHashMap<Long,Order> MAP = new ConcurrentHashMap<>();
     @Override
-    public void add(Order order) {
+    public void add(Order order) throws Exception {
         // 模拟入库
         MAP.put(order.getId(),order);
+        // 模拟入库异常
+        if(order.getId()%2 == 0) {
+            throw new Exception();
+        }
     }
 
     @Override
