@@ -38,6 +38,4 @@ public class OrderServiceImpl implements OrderService {
         // 模拟读取
         return MAP.get(id);
     }
-
-
 }

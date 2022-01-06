@@ -23,11 +23,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author likuan.zhou
  * @date 2021/11/1/001 8:33
  */
-
 @Slf4j
 @Component
 // 默认监控rocketMQTemplate的sendMessageInTransaction
-//@RocketMQTransactionListener
+// @RocketMQTransactionListener
+// 自定义监听
 @RocketMQTransactionListener(rocketMQTemplateBeanName = "extRocketMQTemplate")
 public class ProducerTransactionListener implements RocketMQLocalTransactionListener{
     private final AtomicInteger transactionIndex = new AtomicInteger(0);
@@ -57,23 +57,16 @@ public class ProducerTransactionListener implements RocketMQLocalTransactionList
         String msg = new String((byte[]) message.getPayload(), StandardCharsets.UTF_8);
         log.info("本地事务中间状态UNKNOWN。id:{},message:{},arg:{}",id,message,msg);
         try {
-            // DB 操作
-           /* MessageHeaders headers = message.getHeaders();
-            String transactionId  =  (String)headers.get(RocketMQHeaders.TRANSACTION_ID);
-            String msg = new String((byte[]) message.getPayload(), StandardCharsets.UTF_8);*/
-
             // 执行DB
             // 执行本地业务逻辑, 如果本地事务执行成功, 则通知Broker可以提交消息让Consumer进行消费
             Order order  = JSON.parseObject(msg,Order.class);
             orderService.add(order);
-            // 失败模拟
-            // int i  =  1/0;
 
             log.info("执行本地事务提交COMMIT。id:{},message:{},arg:{}",id,message,o);
             result = RocketMQLocalTransactionState.COMMIT;
             localTransMap.put(id,RocketMQLocalTransactionState.COMMIT);
         } catch (Exception ex) {
-            // ROLLBACK需要再次发送，需要使用定时任务或者手动补偿。不会走checkLocalTransaction。因为本身入库是失败的。
+            // ROLLBACK为失败，需要使用定时任务或者手动补偿。不会走checkLocalTransaction。因为本身入库是失败的。
              log.info("执行异常，本地事务回滚ROLLBACK。id:{},message：{}",id,message);
              result = RocketMQLocalTransactionState.ROLLBACK;
              localTransMap.put(id,RocketMQLocalTransactionState.ROLLBACK);

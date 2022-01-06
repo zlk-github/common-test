@@ -54,15 +54,10 @@ public class ProducerTransactionListener2 implements RocketMQLocalTransactionLis
         result = RocketMQLocalTransactionState.UNKNOWN;
         log.info("本地事务中间状态UNKNOWN，message:{},arg:{}",message,o);
         try {
-            // DB 操作
-          /*  MessageHeaders headers = message.getHeaders();
-            String transactionId  =  (String)headers.get(RocketMQHeaders.TRANSACTION_ID);
-            String msg = new String((byte[]) message.getPayload(), StandardCharsets.UTF_8);*/
-            //int i  =  1/0;
 
             // 执行DB
             // 执行本地事务
-         /*   log.info("执行本地事务提交COMMIT，message:{},arg:{}",message,o);
+           /*   log.info("执行本地事务提交COMMIT，message:{},arg:{}",message,o);
             result = RocketMQLocalTransactionState.COMMIT;*/
             // 转order对象
             // 执行本地业务逻辑, 如果本地事务执行成功, 则通知Broker可以提交消息让Consumer进行消费

@@ -102,8 +102,61 @@ public class UserVO implements Serializable {
     private LocalDateTime updateTime;
 }
 ```
+#### 2.3 业务类（用于测试事务消息）
 
-#### 2.3 常量类
+```java
+// 接口
+public interface OrderService {
+
+    /**
+     * 插入数据
+     * @param order 订单
+     */
+    void add(Order order) throws Exception;
+
+    /**
+     * 更新数据
+     * @param order 订单
+     */
+    void update(Order order);
+
+    /**
+     * id 获取数据
+     * @param id id
+     */
+    Order getById(Long id);
+}
+
+// 实现类
+@Service
+public class OrderServiceImpl implements OrderService {
+    // hashMap线程不安全 速度快(HashMap 适用于单线程操作数据)。多线操作HashMap，我们通过加锁或者加入同步控制依然能正常应用HashMap，只是需要加上同步操作的代价。
+    // concurrentMap线程安全 速度慢 分段锁 不是整体锁(concurrentMap适用于多个线程同时要操作一个map的数据). 但是不能保证线程同步顺序。
+    private static final ConcurrentHashMap<Long,Order> MAP = new ConcurrentHashMap<>();
+    @Override
+    public void add(Order order) throws Exception {
+        // 模拟入库
+        MAP.put(order.getId(),order);
+        // 模拟入库异常
+        if(order.getId()%2 == 0) {
+            throw new Exception();
+        }
+    }
+
+    @Override
+    public void update(Order order) {
+        // 模拟更新
+        MAP.put(order.getId(),order);
+    }
+
+    @Override
+    public Order getById(Long id) {
+        // 模拟读取
+        return MAP.get(id);
+    }
+}
+```
+#### 2.4 常量类
 
 ```java
 /**
@@ -133,7 +186,7 @@ public interface RocketMQConstant {
 }
 ```
 
-#### 2.4 生产者配置application.yaml
+#### 2.5 生产者配置application.yaml
 
 ```yaml
 #服务端口
@@ -172,7 +225,7 @@ rocketmq :
 ```
 
 
-#### 2.5 消费者者配置application.yaml
+#### 2.6 消费者者配置application.yaml
 
 ```yaml
 #服务端口
@@ -210,7 +263,9 @@ rocketmq :
         group8: "rocketmq_consumer_group_1008"
 ```
 
-#### 2.6 生产者
+#### 2.7 生产者
+
+#### 2.7.1 非事务消息生产者
 
 ```java
 package com.zlk.producer.controller;
@@ -248,7 +303,6 @@ import java.util.concurrent.TimeUnit;
 public class ProducerController {
     // swagger : http://localhost:8031/swagger-ui.html
     // 同一台机器的同一条消息，MsgId是不一定一样，不要用来做业务。需要的话自己设置key。
-    // 以下的log.info不要在生产环境使用，否则会生成大量日志
 
     // 当前未配置
     @Autowired
@@ -443,45 +497,193 @@ public class ProducerController {
             log.error("消息发送失败，MQ主机信息：{}，Top:{},消息:{}",rocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_1,message,ex);
         }
     }
+}
+```
+#### 2.7.2 事务消息生产者（事务消息监控的是生产者）
 
+```java
+// 这个RocketMQTemplate的Spring Bean名是'extRocketMQTemplate', 与所定义的类名相同(但首字母小写)
+/*@ExtRocketMQTemplateConfiguration(nameServer="127.0.0.1:9876"
+        , ... // 定义其他属性，如果有必要。
+)*/
+@ExtRocketMQTemplateConfiguration
+public class ExtRocketMQTemplate extends RocketMQTemplate {
+}
+
+/**
+ * 生产者--生产消息(事务消息)，发送到MQ
+ * @author likuan.zhou
+ * @date 2021/11/1/001 8:33
+ */
+@RestController
+@RequestMapping("producerTransaction")
+@Slf4j
+@Api(tags = "生产者")
+public class ProducerTransactionController {
+    // swagger : http://localhost:8031/swagger-ui.html
+    // 同一台机器的同一条消息，MsgId是不一定一样，不要用来做业务。需要的话自己设置key。
+    @Autowired
+    private ExtRocketMQTemplate extRocketMQTemplate;
+    
     @PostMapping("/transaction/send")
-    @ApiOperation("事务消息")
-    public void transactionSend(@RequestBody String msg){
+    @ApiOperation("事务消息1")
+    public void transactionSend(@RequestBody OrderDTO orderDTO){
         try {
             //  事务消息：RocketMQ采用了2PC的思想来实现了提交事务消息，同时增加一个补偿逻辑来处理二阶段超时或者失败的消息。（不支持延时消息和批量消息）
-            Message message = new Message(RocketMQConstant.TOPIC_9,msg.getBytes(StandardCharsets.UTF_8));
-            for (int i = 0; i < 5; i++) {
-                //destination为消息发送的topic，message为消息体，arg为传递给本地函数参数
-                TransactionSendResult transaction = extRocketMQTemplate.sendMessageInTransaction(RocketMQConstant.TOPIC_9, MessageBuilder.withPayload(msg).build(), i);
-                log.info("发送状态：{}",transaction.getLocalTransactionState());
-            }
+            //destination为消息发送的topic，message为消息体，arg为传递给本地函数参数
+            Message<OrderDTO> build = MessageBuilder.withPayload(orderDTO).setHeader("key", orderDTO.getId()).build();
+            TransactionSendResult transaction = extRocketMQTemplate.sendMessageInTransaction(RocketMQConstant.TOPIC_9,build, orderDTO.getId());
+            log.info("发送状态：{}",transaction.getLocalTransactionState());
         }catch (Exception ex) {
             log.error("消息发送失败，MQ主机信息：{}，Top:{}",extRocketMQTemplate.getProducer().getNamesrvAddr(),RocketMQConstant.TOPIC_9,ex);
         }
     }
-
-
 }
 
+/**
+ * 生产者者事务监听器(事务消息1)  每个事务相当于一个业务处理方法
+ * @author likuan.zhou
+ * @date 2021/11/1/001 8:33
+ */
+@Slf4j
+@Component
+// 默认监控rocketMQTemplate的sendMessageInTransaction
+// @RocketMQTransactionListener
+// 自定义监听
+@RocketMQTransactionListener(rocketMQTemplateBeanName = "extRocketMQTemplate")
+public class ProducerTransactionListener implements RocketMQLocalTransactionListener{
+    private final AtomicInteger transactionIndex = new AtomicInteger(0);
+    // 该记录
+    private final ConcurrentHashMap<Long, RocketMQLocalTransactionState> localTransMap=new ConcurrentHashMap<>();
+    @Autowired
+    private OrderService orderService;
+
+    //executeLocalTransaction 方法来执行本地事务
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public RocketMQLocalTransactionState executeLocalTransaction(Message message, Object o) {
+        // 会出现5次发送，待处理
+        // 默认5次UNKNOW
+       /* 事务消息共有三种状态，提交状态、回滚状态、中间状态：
+        TransactionStatus.CommitTransaction: 提交事务，它允许消费者消费此消息。
+        TransactionStatus.RollbackTransaction: 回滚事务，它代表该消息将被删除，不允许被消费。
+        TransactionStatus.Unknown: 中间状态，它代表需要检查消息队列来确定状态。*/
+        //String msg = new String((byte[]) message.getPayload(), StandardCharsets.UTF_8);*/
+
+        // 返回UNKNOWN可以测试checkLocalTransaction方法，执行异常可以测试ROLLBACK，localTransMap记录当前状态
+        Long id =Long.parseLong((String)message.getHeaders().get("key"));
+        RocketMQLocalTransactionState  result;
+        // 中间状态，它代表需要检查消息队列来确定状态。
+        result = RocketMQLocalTransactionState.UNKNOWN;
+        localTransMap.put(id,RocketMQLocalTransactionState.UNKNOWN);
+        String msg = new String((byte[]) message.getPayload(), StandardCharsets.UTF_8);
+        log.info("本地事务中间状态UNKNOWN。id:{},message:{},arg:{}",id,message,msg);
+        try {
+            // 执行DB
+            // 执行本地业务逻辑, 如果本地事务执行成功, 则通知Broker可以提交消息让Consumer进行消费
+            Order order  = JSON.parseObject(msg,Order.class);
+            orderService.add(order);
+
+            log.info("执行本地事务提交COMMIT。id:{},message:{},arg:{}",id,message,o);
+            result = RocketMQLocalTransactionState.COMMIT;
+            localTransMap.put(id,RocketMQLocalTransactionState.COMMIT);
+        } catch (Exception ex) {
+            // ROLLBACK为失败，需要使用定时任务或者手动补偿。不会走checkLocalTransaction。因为本身入库是失败的。
+            log.info("执行异常，本地事务回滚ROLLBACK。id:{},message：{}",id,message);
+            result = RocketMQLocalTransactionState.ROLLBACK;
+            localTransMap.put(id,RocketMQLocalTransactionState.ROLLBACK);
+        }
+        return result;
+    }
+
+    //checkLocalTransaction 方法用于检查本地事务状态(UNKNOW状态)
+    @Override
+    public RocketMQLocalTransactionState checkLocalTransaction(Message message) {
+        // UNKNOW：未知，这个状态有点意思，如果返回这个状态，这个消息既不提交，也不回滚，还是保持prepared状态，而最终决定这个消息命运的，是checkLocalTransaction这个方法。
+        // 回调默认1分钟一次。默认5次UNKNOW，这个消息将被删除。 （brokder.conf中配置）
+        // 正常情况下不会调用到
+        // 相当于是一个事务补偿机制
+        Long id =Long.parseLong((String)message.getHeaders().get("key"));
+        RocketMQLocalTransactionState rocketMQLocalTransactionState = localTransMap.get(id);
+        log.info("【执行检查任务】+id:{},transactionState:{}",id,rocketMQLocalTransactionState);
+        // 库里面已入成功，提交commit到mq。否则将mq事务回滚
+        Order order = orderService.getById(id);
+        // 判断提交或者回滚
+        if (Objects.isNull(order)) {
+            log.info("【执行检查任务结果为ROLLBACK】+order:{},transactionState:{}",order,RocketMQLocalTransactionState.ROLLBACK);
+            return RocketMQLocalTransactionState.ROLLBACK;
+        }
+        log.info("【执行检查任务结果COMMIT】+order:{},transactionState:{}",order,RocketMQLocalTransactionState.ROLLBACK);
+        return RocketMQLocalTransactionState.COMMIT;
+    }
+}
 ```
 
-
 ### 3 消费者
-
 
     集群消费模式下,相同Consumer Group的每个Consumer实例平均分摊消息。
     广播消费模式下，相同Consumer Group的每个Consumer实例都接收全量的消息。
 
     消息分类：普通消息、顺序消息、延时消息、过滤消息、事务消息、批量消息等。
 
+注意事项：
+
+    1.一个消费者组只能消费一个topic与一组topic下tag。（生产者组与消费者组名称不要相同）
+    2.事务消息不支持延时消息和批量消息。
+    3.全局顺序消息需要控制读写队列数为一，性能差 。一般选择分区顺序消息。
+    4.mq消息发送失败应该配合定时任务做补偿。
+    5.mq消费者组、生产者组与topic取名称应该有项目标识，业务标识等，避免出现重复的名称导致消费等出现问题。
+    6.生产环境不要使用topic和消费组自动创建。
+        autoCreateTopicEnable=false
+        autoCreateSubscriptionGroup=false
+    7.消费者需要做幂等性，尽量使用业务标识去重，不要使用msgId.
 
 #### 3.1 集群消费
 
 集群消费模式下,相同Consumer Group的每个Consumer实例平均分摊消息。
 
-##### 3.1.1 普通消息
+##### 3.1.1 普通消息（同步，异步，单向消息）
 
     普通消息：生产者直接把消息放在topic下，消费者直接对topic下所有消息消费。
+
+生产者代码：见topic常量RocketMQConstant.TOPIC_1
+
+消费者代码：
+
+```java
+/**
+ * 消费者--集群模式
+ *     注：集群消费（Clustering）：相同消费组下的消费者都会平均分摊消息。
+ * @author likuan.zhou
+ * @date 2021/11/1/001 8:33
+ */
+/*
+说明：
+    nameServer指定mq集群
+    topic为主题
+    consumerGroup为消费组（不是生产组），
+    consumeMode消息类型（ConsumeMode.ORDERLY为顺序消息，默认非顺序）
+    messageModel消费模式（默认集群消费）--集群消费messageModel = MessageModel.CLUSTERING，广播消费messageModel = MessageModel.BROADCASTING
+    selectorExpression指定tag过滤条件  --默认全部Topic下tag
+    @RocketMQMessageListener(nameServer = "127.0.0.1:9877", topic = "test-topic-4", consumerGroup = "my-consumer_test-topic-6",
+            consumeMode = ConsumeMode.ORDERLY,messageModel = MessageModel.CLUSTERING)
+*/
+@Slf4j
+ //@Component
+// 消费组rocketmq_group_1001，topic为clustering-topic1
+@RocketMQMessageListener(topic = RocketMQConstant.TOPIC_1,consumerGroup ="${rocketmq.consumer.group1}",
+        messageModel = MessageModel.CLUSTERING)
+public class ConsumerListener implements RocketMQListener<Message> {
+    @Value("${rocketmq.consumer.group1}")
+    private String groupName;
+
+    @Override
+    public void onMessage(Message message) {
+        String msg = new String((byte[]) message.getBody(), StandardCharsets.UTF_8);
+        log.info("拿到消费组：{}，主题Top:{}下消息。消息：{}",groupName,RocketMQConstant.TOPIC_1,msg);
+    }
+}
+```
 
 ##### 3.1.2 顺序消息
 
@@ -518,7 +720,7 @@ public class ProducerController {
 
 #### 3.2 广播消费（简单介绍）
 
-广播消费模式下，相同Consumer Group的每个Consumer实例都接收全量的消息。
+广播消费模式下，相同Consumer Group的每个Consumer实例都接收全量的消息。例子省略。
 
 
 ### 参考
