@@ -8,7 +8,7 @@ Rocketmq 介绍与常见问题汇总。
     2、公共包github地址：git@github.com:zlk-github/common.git    --(https://github.com/zlk-github/common/tree/master/common-rocketmq)
 
 
-### 1 Redis 介绍
+### 1 RocketMQ 介绍
 
 RocketMQ是一款分布式消息中间件,最初是由阿里消息中间件团队开发，解决线上海量数据堆积问题。2016捐赠到Apache下成为孵化项目。
 
@@ -254,5 +254,11 @@ RocketMQ默认采用长轮询的拉模式，单机可以支持千万级别数据
     注：
       主从模式：主从节点数据一致，各主节点数据分区分布（不一样）。
       Dledger集群：
+
+### 待补充：
+
+  集群
+  权限
+  限流
 
 ### 参考

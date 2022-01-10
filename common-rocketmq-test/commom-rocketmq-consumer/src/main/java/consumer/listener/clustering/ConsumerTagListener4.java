@@ -47,13 +47,15 @@ public class ConsumerTagListener4 implements RocketMQListener<MessageExt> , Rock
         defaultMQPushConsumer.setMaxReconsumeTimes(5);
         // 如下，设置其它consumer相关属性
         defaultMQPushConsumer.setPullBatchSize(16);
-        /*  defaultMQPushConsumer.setConsumeThreadMin(2); //消费端拉去到消息以后分配线程去消费
+        /*
+        defaultMQPushConsumer.setConsumeThreadMin(2); //消费端拉去到消息以后分配线程去消费
         defaultMQPushConsumer.setConsumeThreadMax(10);//最大消费线程，一般情况下，默认队列没有塞满，是不会启用新的线程的
         defaultMQPushConsumer.setPullInterval(1000);//消费端多久一次去rocketMq 拉去消息
         defaultMQPushConsumer.setPullBatchSize(32);     //消费端每个队列一次拉去多少个消息，若该消费端分配了N个监控队列，那么消费端每次去rocketMq拉去消息说为N*1
         defaultMQPushConsumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_TIMESTAMP);
         defaultMQPushConsumer.setConsumeTimestamp(UtilAll.timeMillisToHumanString3(System.currentTimeMillis()));
-        defaultMQPushConsumer.setConsumeMessageBatchMaxSize(2);*/
+        defaultMQPushConsumer.setConsumeMessageBatchMaxSize(2); //单次消费时一次性消费多少条消息，批量消费接口才有用，可选配置
+        */
     }
 
 }
