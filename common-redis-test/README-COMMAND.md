@@ -24,6 +24,7 @@ Redis相关可执行文件的主要作用
     启动服务命令： redis-sentinel /usr/local/redis/redis-5.0.14/etc/sentinel.conf
     进入redis-cli： redis-cli
     进入redis-cli(密码123456)： redis-cli -h 127.0.0.1 -p 6379 -a 123456
+                               redis-cli -c -h yourhost -p yourpost
     查看服务： ps aux|grep redis
     查看端口: netstat -antp | grep 6379
     停止服务： redis-cli -p 6379 shutdown   (注：不要使用kill -9 PID,可能导致备份丢数据)
