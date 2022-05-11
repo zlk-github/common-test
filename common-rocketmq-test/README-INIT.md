@@ -10,7 +10,9 @@
     
     Rocketmq开源项目(集群监控)：incubator-rocketmq-externals
         参考：https://www.jianshu.com/p/63f4062b661d
-        或者RocketMQ-DashBoard
+        或者RocketMQ-DashBoard（下载地址 https://github.com/apache/rocketmq-dashboard.git
+                               安装：https://blog.csdn.net/zihua2005/article/details/121422362
+                               开放端口10909）
 
     mqadmin管理工具(命令操作)：
         进入RocketMQ安装位置，在bin目录下执行
@@ -34,7 +36,9 @@
 
 **启动rocketmq-console**
 
-    nohup java -jar rocketmq-console-ng-1.0.0.jar --rocketmq.config.namesrvAddr='47.119.180.152:9876' >out.log 2>&1 &
+    nohup java -Xms128m -Xmx256m -jar rocketmq-console-ng-1.0.0.jar --server.port=8086 --rocketmq.config.namesrvAddr='47.119.180.152:9876' >out.log 2>&1 &
+
+    nohup java -Xms128m -Xmx256m -jar rocketmq-dashboard-1.0.1-SNAPSHOT.jar --server.port=8080 --rocketmq.config.namesrvAddr='124.220.189.132:9876' >out2.log 2>&1 &
 
 ### 1 Linux安装JDK8
 
@@ -193,6 +197,15 @@ Rocketmq配置文件：/usr/local/rocketmq/rocketmq-4.9.1/conf/broker.conf
     firewall-cmd --zone=public --query-port=9876/tcp
     firewall-cmd --zone=public --query-port=8086/tcp
     firewall-cmd --zone=public --query-port=10911/tcp
+
+    ubutun18
+       查看防火墙状态、开启防火墙、开启端口、防火墙重启、查看端口监听情况
+        $ sudo ufw status
+        $ sudo ufw enable
+        $ sudo ufw allow 22
+        $ sudo ufw reload
+        $ sudo netstat -tunlp | grep 22  
+    查看开放的端口：netstat -aptn 或者 iptables -nL
 
  注：阿里云需要配置安全组放行端口。 10911是阿里云需要。
 
