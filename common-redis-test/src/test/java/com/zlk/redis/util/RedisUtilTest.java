@@ -3,13 +3,18 @@ package com.zlk.redis.util;
 
 import com.zlk.common.redis.util.RedisUtil;
 import com.zlk.core.model.vo.UserVO;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.DefaultTypedTuple;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -26,7 +31,10 @@ import static org.junit.Assert.assertNotNull;
 // 注 类和方法必须为public才能运行
 @SpringBootTest
 @RunWith(SpringRunner.class)
+@Slf4j
 public class RedisUtilTest {
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     //过期时间
     private final static Long EXPIRE_TIME = 60*60L;
@@ -310,12 +318,28 @@ public class RedisUtilTest {
         assertEquals(true,aBoolean);
     }
 
+
+
     @Test
     public void testZsGet() {
         //获取key对应Zset。按分值范围。[1,3]
         Set<UserVO> userVOSet = (Set<UserVO>)redisUtil.zsGet(ZSET_KEY,1,3);
         assertNotNull(userVOSet);
     }
+
+/*      redisTemplate.opsForZSet().add("picked", "siteCode1", 1);
+        redisTemplate.opsForZSet().add("picked", "siteCode2", 2);
+        redisTemplate.opsForZSet().add("picked", "siteCode3", 3);
+        redisTemplate.opsForZSet().add("picked", "siteCode4", 4);
+        redisTemplate.opsForZSet().add("picked", "siteCode5", 5);
+        redisTemplate.opsForZSet().add("picked", "siteCode6", 6);
+
+    //        Set<ZSetOperations.TypedTuple<Object>> picked = redisTemplate.opsForZSet().rangeWithScores("picked", 0, 3);
+    Set<Object> picked = redisTemplate.opsForZSet().reverseRange("picked", 0, 2);
+        picked.forEach(item->{
+        System.out.println(item);
+//            System.out.println(item.getValue()+"，分数："+item.getScore());
+    });*/
 
     @Test
     public void testZsSize() {
@@ -326,6 +350,7 @@ public class RedisUtilTest {
 
     @Test
     public void testZsRemove() {
+        // TODO 存在bug
         //获取key对应Zset长度
         Set<UserVO> set = new HashSet<>();
         UserVO userVO = new UserVO();
@@ -372,6 +397,229 @@ public class RedisUtilTest {
             arrayList.add(userVO);
         }
         return arrayList;
+    }
+
+
+    //TODO ==================之后需要梳理===================
+    @Test
+    public void testZsSet2() {
+        // 插入SET,类似java的HashSet，不会存在重复数据（只在当前插入批次去重）
+        // 以下只会存在2个set(后两条存在，第二条会覆盖第一条).且有比分排名
+        Boolean aBoolean = this.zsSet(ZSET_KEY, "1001", 1,EXPIRE_TIME);
+        Boolean aBoolean2 = this.zsSet(ZSET_KEY, "1002",2, EXPIRE_TIME);
+        Boolean aBoolean6 = this.zsSet(ZSET_KEY, "1002",2, EXPIRE_TIME);
+        Boolean aBoolean3 = this.zsSet(ZSET_KEY, "1002",3, EXPIRE_TIME);
+        Boolean aBoolean4 = this.zsSet(ZSET_KEY, "1005",6.6, EXPIRE_TIME);
+        this.zsSet(ZSET_KEY, "1007",6.0, EXPIRE_TIME);
+        this.zsSet(ZSET_KEY, "1008",80, EXPIRE_TIME);
+        this.zsSet(ZSET_KEY, "1009",20, EXPIRE_TIME);
+        this.zsSet(ZSET_KEY, "1010",168, EXPIRE_TIME);
+        this.zsSet(ZSET_KEY, "1011",66, EXPIRE_TIME);
+        this.zsSet(ZSET_KEY, "1012",33, EXPIRE_TIME);
+        this.zsSet(ZSET_KEY, "1013",0, EXPIRE_TIME);
+        this.zsSet(ZSET_KEY, "1014",0, EXPIRE_TIME);
+        this.zsSet(ZSET_KEY, "1015",0, EXPIRE_TIME);
+        this.zsSet(ZSET_KEY, "1016",0, EXPIRE_TIME);
+        //获取kyy-value分值 Double score = redisTemplate.opsForZSet().score(key, value);
+        assertEquals(true,aBoolean);
+    }
+
+    @Test
+    public void testZsSetBatch() {
+        Set<ZSetOperations.TypedTuple<String>> tuples = new HashSet<>();
+        ZSetOperations.TypedTuple<String> answerVoInZset = new DefaultTypedTuple<>("1001", 1.0);
+        tuples.add(answerVoInZset);
+        answerVoInZset = new DefaultTypedTuple<>("1002", 3.0);
+        tuples.add(answerVoInZset);
+        answerVoInZset = new DefaultTypedTuple<>("1017", 500.0);
+        tuples.add(answerVoInZset);
+        this.zsSetBatch(ZSET_KEY,tuples);
+    }
+
+    @Test
+    public void testZsRemoveValue() {
+        this.zsRemove(ZSET_KEY, "1002");
+    }
+
+    @Test
+    public void testZsTop() {
+        // 排名top5
+        Set<ZSetOperations.TypedTuple<Object>> typedTuples = this.reverseRangeWithScores(ZSET_KEY, 5-1);
+        for (ZSetOperations.TypedTuple<Object> kv: typedTuples) {
+            Object value = kv.getValue();
+            Double score = kv.getScore();
+            System.out.println("value:"+value+"; score:"+score);
+        }
+    }
+
+    @Test
+    public void testZsAfterTop() {
+        // 排名倒数5
+        Set<ZSetOperations.TypedTuple<Object>> typedTuples = this.rangeWithScores(ZSET_KEY, 5-1);
+        for (ZSetOperations.TypedTuple<Object> kv: typedTuples) {
+            Object value = kv.getValue();
+            Double score = kv.getScore();
+            System.out.println("value:"+value+"; score:"+score);
+        }
+    }
+
+    @Test
+    public void testRangeByScore() {
+        // 分数在0-40
+        Set<ZSetOperations.TypedTuple<Object>> typedTuples = this.rangeByScore(ZSET_KEY, 0,40);
+        for (ZSetOperations.TypedTuple<Object> kv: typedTuples) {
+            Object value = kv.getValue();
+            Double score = kv.getScore();
+            System.out.println("value:"+value+"; score:"+score);
+        }
+    }
+
+    /**
+     * 正序取前几（排名的倒数）
+     * @param key
+     * @param top
+     * @return
+     */
+   /* public  Set<ZSetOperations.TypedTuple<Object>> rangeWithScores(String key, int top) {
+        try {
+            //只有排名，无分值返回Set<ZSetOperations.TypedTuple<Object>> scores = redisTemplate.opsForZSet().range(key, 0, top);
+            Set<ZSetOperations.TypedTuple<Object>> scores = redisTemplate.opsForZSet().rangeWithScores(key, 0, top);
+            return scores;
+        } catch (Exception var8) {
+            log.error("获取redis缓存失败。key:{},value:{}", key,top);
+            return null;
+        }
+    }*/
+
+    /**
+     * 倒序取前几（排名的top）
+     * @param key
+     * @param top
+     * @return
+     */
+   /* public  Set<ZSetOperations.TypedTuple<Object>> reverseRangeWithScores(String key, int top) {
+        try {
+            // 只有排名无分值返回 Set<ZSetOperations.TypedTuple<Object>> scores = redisTemplate.opsForZSet().reverseRange(key, 0, top);
+            Set<ZSetOperations.TypedTuple<Object>> scores = redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, top);
+            return scores;
+        } catch (Exception var8) {
+            log.error("获取redis缓存失败。key:{},value:{}", key,top);
+            return null;
+        }
+    }*/
+
+    /**
+     * 正序取前几（排名的倒数）
+     * @param key
+     * @param top
+     * @return
+     */
+    public  Set<ZSetOperations.TypedTuple<Object>> rangeWithScores(Object key, int top) {
+        try {
+            //只有排名，无分值返回Set<ZSetOperations.TypedTuple<Object>> scores = redisTemplate.opsForZSet().range(key, 0, top);
+            Set<ZSetOperations.TypedTuple<Object>> scores = redisTemplate.opsForZSet().rangeWithScores(key, 0, top);
+            return scores;
+        } catch (Exception var8) {
+            log.error("获取redis缓存失败。key:{},value:{}", key,top);
+            return null;
+        }
+    }
+
+    /**
+     * 倒序取前几（排名的top）
+     * @param key
+     * @param top
+     * @return
+     */
+    public  Set<ZSetOperations.TypedTuple<Object>> reverseRangeWithScores(Object key, int top) {
+        try {
+            // 只有排名无分值返回 Set<ZSetOperations.TypedTuple<Object>> scores = redisTemplate.opsForZSet().reverseRange(key, 0, top);
+            Set<ZSetOperations.TypedTuple<Object>> scores = redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, top);
+            return scores;
+        } catch (Exception var8) {
+            log.error("获取redis缓存失败。key:{},value:{}", key,top);
+            return null;
+        }
+    }
+
+
+    /**
+     * 按分值范围
+     * @param key
+     * @param min
+     * @param max
+     * @return
+     */
+    public Set<ZSetOperations.TypedTuple<Object>> rangeByScore(String key, double min, double max) {
+        try {
+            return this.redisTemplate.opsForZSet().rangeByScoreWithScores(key, min, max);
+        } catch (Exception var7) {
+            log.error(var7.getMessage(), var7);
+            return null;
+        }
+    }
+
+
+    /**
+     * 赋值
+     * @param key
+     * @param value
+     * @param sort
+     * @param time
+     * @return
+     */
+    public Boolean zsSet(String key, Object value, double sort, long time) {
+        try {
+            this.redisTemplate.opsForZSet().add(key, value, sort);
+            this.redisTemplate.expire(key, time, TimeUnit.SECONDS);
+            return true;
+        } catch (Exception var8) {
+            log.error("写入redis缓存失败。key:{},value:{}", new Object[]{key, value, var8});
+            return false;
+        }
+    }
+
+    /**
+     * 批量插入
+     * @param key
+     * @param tuples
+     * @return
+     */
+    public boolean zsSetBatch(String key, Set<ZSetOperations.TypedTuple<String>> tuples) {
+        try {
+            this.redisTemplate.opsForZSet().add(key, tuples);
+            return true;
+        } catch (Exception var4) {
+            log.error(var4.getMessage(), var4);
+            return false;
+        }
+    }
+
+    /**
+     * 移除keyvalue
+     * @param key
+     * @param value
+     * @return
+     */
+    public Boolean zsRemove(String key, Object value) {
+        try {
+            redisTemplate.opsForZSet().remove(key, value);
+            return true;
+        } catch (Exception var8) {
+            log.error("删除redis缓存失败。key:{},value:{}", new Object[]{key, value, var8});
+            return false;
+        }
+    }
+
+    public Long zsRemove2(String key, Set<String> valueSet) {
+        try {
+            //TODO 测试未通过
+            Long remove = this.redisTemplate.boundZSetOps(key).remove(valueSet);
+            return remove;
+        } catch (Exception var8) {
+            log.error("删除redis缓存失败。key:{},value:{}", new Object[]{key, valueSet, var8});
+            return 0L;
+        }
     }
 
 
